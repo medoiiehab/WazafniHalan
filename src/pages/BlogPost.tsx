@@ -1,0 +1,156 @@
+import { useParams, Navigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Calendar, User, ArrowRight, Share2, Loader2 } from 'lucide-react';
+import Layout from '@/components/layout/Layout';
+import AdSense from '@/components/common/AdSense';
+import { useBlogPost, usePublishedBlogPosts } from '@/hooks/useBlogPosts';
+
+const BlogPost = () => {
+  const { postId } = useParams<{ postId: string }>();
+  const { data: post, isLoading } = useBlogPost(postId || '');
+  const { data: allPosts = [] } = usePublishedBlogPosts();
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!post) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 2);
+
+  const formatDate = (dateString: string) => {
+    return new Intl.DateTimeFormat('ar-SA', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({ title: post.title, text: post.excerpt || '', url: window.location.href });
+    }
+  };
+
+  return (
+    <Layout>
+      <Helmet>
+        <title>{post.title} | مدونة وظفني حالاً</title>
+        <meta name="description" content={post.excerpt || ''} />
+      </Helmet>
+
+      {/* AdSense 1 - Top Leaderboard */}
+      <div className="py-4 bg-muted">
+        <AdSense size="leaderboard" placement="blog_post_top" />
+      </div>
+
+      <div className="container-custom py-8">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+          <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
+          <ArrowRight className="w-4 h-4" />
+          <Link to="/blog" className="hover:text-primary transition-colors">المدونة</Link>
+          <ArrowRight className="w-4 h-4" />
+          <span className="text-foreground line-clamp-1">{post.title}</span>
+        </nav>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 max-w-3xl">
+            {/* AdSense 2 - Before Article */}
+            <AdSense size="inline" className="mb-8" placement="blog_banner_1" />
+
+            <article className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+              <div className="aspect-video bg-muted relative">
+                {post.image_url ? (
+                  <img
+                    src={post.image_url}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                ) : null}
+                <div className={`w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ${post.image_url ? 'hidden' : ''}`}>
+                  <span className="text-6xl">📝</span>
+                </div>
+              </div>
+
+              <div className="p-6 md:p-8">
+                <div className="flex flex-wrap items-center gap-4 mb-4">
+                  <span className="flex items-center gap-1 text-sm text-muted-foreground"><Calendar className="w-4 h-4" />{formatDate(post.created_at)}</span>
+                  <span className="flex items-center gap-1 text-sm text-muted-foreground"><User className="w-4 h-4" />{post.author}</span>
+                </div>
+
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{post.title}</h1>
+
+                {/* AdSense 3 - In Article */}
+                <AdSense size="inline" className="mb-6" placement="blog_post_in_article_1" />
+
+                <div
+                  className="prose prose-lg max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap dark:prose-invert 
+                  prose-headings:text-foreground prose-a:text-primary prose-strong:text-foreground
+                  prose-img:rounded-xl prose-img:w-full prose-img:object-cover"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+
+                {/* AdSense 4 - Mid Article */}
+                <AdSense size="rectangle" className="my-6 mx-auto" placement="blog_post_in_article_1" />
+
+              </div>
+            </article>
+
+            {/* AdSense 5 - After Article */}
+            <AdSense size="leaderboard" className="mt-8" placement="blog_banner_1" />
+
+            {/* AdSense 6 - Large Rectangle */}
+            <AdSense size="large-rectangle" className="mt-8 mx-auto" placement="home_large_rect" />
+
+            {relatedPosts.length > 0 && (
+              <section className="mt-12">
+                <h2 className="section-title">مقالات ذات صلة</h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {relatedPosts.map((relatedPost) => (
+                    <Link key={relatedPost.id} to={`/blog/${relatedPost.slug}`} className="job-card block group">
+                      <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">{relatedPost.title}</h3>
+                      {relatedPost.excerpt && <p className="text-sm text-muted-foreground line-clamp-2">{relatedPost.excerpt}</p>}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* AdSense 7 - After Related */}
+            <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
+          </div>
+
+          {/* Sidebar */}
+          <div className="hidden lg:block lg:w-[320px] space-y-6">
+            {/* AdSense 8 - Sidebar Top */}
+            <AdSense size="rectangle" placement="sidebar_top" />
+            {/* AdSense 9 - Sidebar Middle */}
+            <AdSense size="rectangle" placement="sidebar_middle" />
+            {/* AdSense 10 - Sidebar Bottom */}
+            <AdSense size="large-rectangle" placement="sidebar_bottom" />
+          </div>
+        </div>
+      </div>
+
+      {/* AdSense 11 - Before Footer */}
+      <div className="py-4">
+        <AdSense size="leaderboard" placement="footer_top" />
+      </div>
+
+      {/* AdSense 12 - Extra Banner */}
+      <div className="py-4">
+        <AdSense size="banner" placement="footer_top" />
+      </div>
+    </Layout>
+  );
+};
+
+export default BlogPost;
