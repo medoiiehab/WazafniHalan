@@ -49,6 +49,7 @@ const EmployeeDashboard = () => {
     apply_link: "",
     is_featured: false,
     image_url: "",
+    editor: "",
   });
 
   // Blog form state
@@ -95,6 +96,7 @@ const EmployeeDashboard = () => {
         apply_link: job.apply_link || "",
         is_featured: job.is_featured || false,
         image_url: job.image_url || "",
+        editor: job.editor || "",
       });
     } else {
       setEditingJob(null);
@@ -113,6 +115,7 @@ const EmployeeDashboard = () => {
         apply_link: "",
         is_featured: false,
         image_url: "",
+        editor: user?.id || "",
       });
     }
     setIsJobModalOpen(true);
@@ -152,6 +155,16 @@ const EmployeeDashboard = () => {
   };
 
   const handleSaveJob = async () => {
+    // Validation
+    if (!jobForm.title.trim()) {
+      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال عنوان الوظيفة", variant: "destructive" });
+      return;
+    }
+    if (!jobForm.description.trim()) {
+      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال وصف الوظيفة", variant: "destructive" });
+      return;
+    }
+
     try {
       const jobData = {
         title: jobForm.title,
@@ -173,6 +186,7 @@ const EmployeeDashboard = () => {
         apply_link: jobForm.apply_link || null,
         is_featured: jobForm.is_featured,
         image_url: jobForm.image_url || null,
+        editor: jobForm.editor || user?.id || null,
       };
 
       if (editingJob) {
@@ -184,7 +198,13 @@ const EmployeeDashboard = () => {
       }
       setIsJobModalOpen(false);
     } catch (error) {
-      toast({ title: "حدث خطأ", description: "يرجى المحاولة مرة أخرى", variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+      toast({ 
+        title: "حدث خطأ", 
+        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى", 
+        variant: "destructive" 
+      });
+      console.error("Error saving job:", error);
     }
   };
 
@@ -194,12 +214,28 @@ const EmployeeDashboard = () => {
         await deleteJob.mutateAsync(id);
         toast({ title: "تم حذف الوظيفة بنجاح" });
       } catch (error) {
-        toast({ title: "حدث خطأ", variant: "destructive" });
+        const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+        toast({ 
+          title: "فشل الحذف", 
+          description: errorMessage || "يرجى المحاولة مرة أخرى", 
+          variant: "destructive" 
+        });
+        console.error("Error deleting job:", error);
       }
     }
   };
 
   const handleSaveBlog = async () => {
+    // Validation
+    if (!blogForm.title.trim()) {
+      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال عنوان المقال", variant: "destructive" });
+      return;
+    }
+    if (!blogForm.content.trim()) {
+      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال محتوى المقال", variant: "destructive" });
+      return;
+    }
+
     try {
       const blogData = {
         title: blogForm.title,
@@ -228,7 +264,13 @@ const EmployeeDashboard = () => {
       }
       setIsBlogModalOpen(false);
     } catch (error) {
-      toast({ title: "حدث خطأ", description: "يرجى المحاولة مرة أخرى", variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+      toast({ 
+        title: "حدث خطأ", 
+        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى", 
+        variant: "destructive" 
+      });
+      console.error("Error saving blog:", error);
     }
   };
 
@@ -238,7 +280,13 @@ const EmployeeDashboard = () => {
         await deleteBlogPost.mutateAsync(id);
         toast({ title: "تم حذف المقال بنجاح" });
       } catch (error) {
-        toast({ title: "حدث خطأ", variant: "destructive" });
+        const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+        toast({ 
+          title: "فشل الحذف", 
+          description: errorMessage || "يرجى المحاولة مرة أخرى", 
+          variant: "destructive" 
+        });
+        console.error("Error deleting blog:", error);
       }
     }
   };

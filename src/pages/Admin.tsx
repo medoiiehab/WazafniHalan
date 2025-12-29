@@ -81,6 +81,9 @@ const Admin = () => {
   const [isSearchingUsers, setIsSearchingUsers] = useState(false);
   const [isAssigningRole, setIsAssigningRole] = useState<string | null>(null);
 
+  // Editor info state
+  const [editorInfo, setEditorInfo] = useState<Record<string, string>>({});
+
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const { data: jobs = [], isLoading: isLoadingJobs } = useJobs();
@@ -140,6 +143,37 @@ const Admin = () => {
     }
   }, [adSenseSettings]);
 
+  // Fetch editor information for jobs
+  useEffect(() => {
+    const fetchEditorInfo = async () => {
+      const editorIds = jobs
+        .map(job => job.editor)
+        .filter((id): id is string => id !== null && id !== undefined && id !== '');
+      
+      if (editorIds.length === 0) return;
+
+      const newEditorInfo: Record<string, string> = { ...editorInfo };
+      const missingIds = editorIds.filter(id => !newEditorInfo[id]);
+
+      if (missingIds.length === 0) return;
+
+      for (const editorId of missingIds) {
+        try {
+          const { data, error } = await supabase.rpc('get_user_email', { user_uuid: editorId });
+          if (!error && data) {
+            newEditorInfo[editorId] = data;
+          }
+        } catch (error) {
+          console.error(`Failed to fetch editor info for ${editorId}:`, error);
+        }
+      }
+
+      setEditorInfo(newEditorInfo);
+    };
+
+    fetchEditorInfo();
+  }, [jobs]);
+
   // Job form state
   const [jobForm, setJobForm] = useState({
     title: "",
@@ -156,6 +190,7 @@ const Admin = () => {
     apply_link: "",
     is_featured: false,
     image_url: "",
+    editor: "",
   });
 
   // Blog form state
@@ -206,6 +241,7 @@ const Admin = () => {
         apply_link: job.apply_link || "",
         is_featured: job.is_featured || false,
         image_url: job.image_url || "",
+        editor: job.editor || "",
       });
     } else {
       setEditingJob(null);
@@ -224,6 +260,7 @@ const Admin = () => {
         apply_link: "",
         is_featured: false,
         image_url: "",
+        editor: user?.id || "",
       });
     }
     setIsJobModalOpen(true);
@@ -284,6 +321,7 @@ const Admin = () => {
         apply_link: jobForm.apply_link || null,
         is_featured: jobForm.is_featured,
         image_url: jobForm.image_url || null,
+        editor: jobForm.editor || user?.id || null,
       };
 
       if (editingJob) {
@@ -295,7 +333,13 @@ const Admin = () => {
       }
       setIsJobModalOpen(false);
     } catch (error) {
-      toast({ title: "حدث خطأ", description: "يرجى المحاولة مرة أخرى", variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+      toast({ 
+        title: "حدث خطأ", 
+        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى", 
+        variant: "destructive" 
+      });
+      console.error("Error saving job:", error);
     }
   };
 
@@ -305,7 +349,13 @@ const Admin = () => {
         await deleteJob.mutateAsync(id);
         toast({ title: "تم حذف الوظيفة بنجاح" });
       } catch (error) {
-        toast({ title: "حدث خطأ", variant: "destructive" });
+        const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+        toast({ 
+          title: "فشل الحذف", 
+          description: errorMessage || "يرجى المحاولة مرة أخرى", 
+          variant: "destructive" 
+        });
+        console.error("Error deleting job:", error);
       }
     }
   };
@@ -339,7 +389,13 @@ const Admin = () => {
       }
       setIsBlogModalOpen(false);
     } catch (error) {
-      toast({ title: "حدث خطأ", description: "يرجى المحاولة مرة أخرى", variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+      toast({ 
+        title: "حدث خطأ", 
+        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى", 
+        variant: "destructive" 
+      });
+      console.error("Error saving blog:", error);
     }
   };
 
@@ -349,7 +405,13 @@ const Admin = () => {
         await deleteBlogPost.mutateAsync(id);
         toast({ title: "تم حذف المقال بنجاح" });
       } catch (error) {
-        toast({ title: "حدث خطأ", variant: "destructive" });
+        const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
+        toast({ 
+          title: "فشل الحذف", 
+          description: errorMessage || "يرجى المحاولة مرة أخرى", 
+          variant: "destructive" 
+        });
+        console.error("Error deleting blog:", error);
       }
     }
   };
@@ -931,6 +993,7 @@ const Admin = () => {
                           <th className="text-right py-3 px-4 font-medium text-muted-foreground">الشركة</th>
                           <th className="text-right py-3 px-4 font-medium text-muted-foreground">الدولة</th>
                           <th className="text-right py-3 px-4 font-medium text-muted-foreground">الوسم</th>
+                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">المحرر</th>
                           <th className="text-right py-3 px-4 font-medium text-muted-foreground">التاريخ</th>
                           <th className="text-right py-3 px-4 font-medium text-muted-foreground">الإجراءات</th>
                         </tr>
@@ -953,6 +1016,16 @@ const Admin = () => {
                                 <span className="px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-xs">
                                   {exclusiveTagLabels[job.exclusive_tag]}
                                 </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-muted-foreground text-sm">
+                              {job.editor ? (
+                                <div className="flex flex-col gap-1">
+                                  <span className="font-medium text-foreground">{editorInfo[job.editor] || "جاري التحميل..."}</span>
+                                  <span className="text-xs opacity-75">{job.editor.slice(0, 8)}...</span>
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">غير محدد</span>
                               )}
                             </td>
                             <td className="py-3 px-4 text-muted-foreground">{formatDate(job.created_at)}</td>

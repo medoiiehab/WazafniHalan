@@ -16,6 +16,7 @@ export interface Job {
   apply_link: string | null;
   is_featured: boolean | null;
   image_url: string | null;
+  editor: string | null;
   created_at: string;
   updated_at: string;
 }
