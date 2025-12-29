@@ -786,11 +786,14 @@ const EmployeeDashboard = () => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">المحتوى *</label>
-              <RichTextEditor
-                value={blogForm.content}
-                onChange={(value) => setBlogForm({ ...blogForm, content: value })}
-                placeholder="اكتب محتوى المقال هنا..."
-              />
+              <div className="h-[500px] border border-border rounded-lg overflow-hidden">
+                <RichTextEditor
+                  value={blogForm.content}
+                  onChange={(value) => setBlogForm({ ...blogForm, content: value })}
+                  placeholder="اكتب محتوى المقال هنا..."
+                  className="h-full"
+                />
+              </div>
             </div>
 
             <div>
