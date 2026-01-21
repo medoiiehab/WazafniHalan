@@ -2,6 +2,7 @@ export type JobExclusiveTag = 'none' | 'best' | 'high_pay' | 'urgent' | 'feature
 
 export interface Job {
   id: string;
+  slug?: string;
   title: string;
   description: string;
   short_description: string | null;

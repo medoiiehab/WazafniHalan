@@ -115,8 +115,8 @@ const JobDetails = () => {
           <span className="text-foreground">{job.title}</span>
         </nav>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1">
+        <div className="flex flex-col lg:flex-row gap-8 justify-center">
+          <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
             {/* AdSense 3 - Before Article */}
             <AdSense size="inline" className="mb-6" placement="job_details_banner_1" />
 
@@ -172,25 +172,23 @@ const JobDetails = () => {
                     </ul>
                   </section>
                 )}
-
-                <section>
-                  <div className="flex flex-wrap gap-3">
-                    {job.apply_link && (
-                      <a
-                        href={job.apply_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-primary inline-flex items-center gap-2"
-                        onClick={() => trackEvent.mutate({ jobId: job.id, eventType: 'click' })}
-                      >
-                        <ExternalLink className="w-5 h-5" />قدم الآن
-                      </a>
-                    )}
-
-                  </div>
-                </section>
               </div>
             </article>
+
+            {/* Apply Button - Moved below article */}
+            {job.apply_link && (
+              <div className="mt-6 p-6 bg-card rounded-xl shadow-sm border border-border">
+                <a
+                  href={job.apply_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary w-full flex items-center justify-center gap-2 py-4 text-lg"
+                  onClick={() => trackEvent.mutate({ jobId: job.id, eventType: 'click' })}
+                >
+                  <ExternalLink className="w-5 h-5" />قدم الآن
+                </a>
+              </div>
+            )}
 
             {/* AdSense 6 - After Article */}
             <AdSense size="leaderboard" className="mt-8" placement="home_after_featured" />
@@ -211,29 +209,6 @@ const JobDetails = () => {
 
             {/* AdSense 8 - After Related */}
             <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
-          </div>
-
-          <div className="hidden lg:block lg:w-[320px] space-y-6">
-            <div className="bg-card rounded-xl p-5 shadow-sm border border-border">
-              <h3 className="text-lg font-bold text-foreground mb-4">التقديم السريع</h3>
-              {job.apply_link && (
-                <a
-                  href={job.apply_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary w-full flex items-center justify-center gap-2"
-                  onClick={() => trackEvent.mutate({ jobId: job.id, eventType: 'click' })}
-                >
-                  <ExternalLink className="w-5 h-5" />قدم الآن
-                </a>
-              )}
-            </div>
-            {/* AdSense 9 - Sidebar Top */}
-            <AdSense size="rectangle" placement="sidebar_top" />
-            {/* AdSense 10 - Sidebar Middle */}
-            <AdSense size="rectangle" placement="sidebar_middle" />
-            {/* AdSense 11 - Sidebar Bottom */}
-            <AdSense size="large-rectangle" placement="sidebar_bottom" />
           </div>
         </div>
       </div>

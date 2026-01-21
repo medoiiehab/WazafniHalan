@@ -57,8 +57,8 @@ const BlogPost = () => {
           <span className="text-foreground line-clamp-1">{post.title}</span>
         </nav>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 max-w-3xl">
+        <div className="flex flex-col lg:flex-row gap-8 justify-center">
+          <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
             {/* AdSense 2 - Before Article */}
             <AdSense size="inline" className="mb-8" placement="blog_banner_1" />
 
@@ -127,25 +127,15 @@ const BlogPost = () => {
             {/* AdSense 7 - After Related */}
             <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
           </div>
-
-          {/* Sidebar */}
-          <div className="hidden lg:block lg:w-[320px] space-y-6">
-            {/* AdSense 8 - Sidebar Top */}
-            <AdSense size="rectangle" placement="sidebar_top" />
-            {/* AdSense 9 - Sidebar Middle */}
-            <AdSense size="rectangle" placement="sidebar_middle" />
-            {/* AdSense 10 - Sidebar Bottom */}
-            <AdSense size="large-rectangle" placement="sidebar_bottom" />
-          </div>
         </div>
       </div>
 
-      {/* AdSense 11 - Before Footer */}
+      {/* AdSense 8 - Before Footer */}
       <div className="py-4">
         <AdSense size="leaderboard" placement="footer_top" />
       </div>
 
-      {/* AdSense 12 - Extra Banner */}
+      {/* AdSense 9 - Extra Banner */}
       <div className="py-4">
         <AdSense size="banner" placement="footer_top" />
       </div>

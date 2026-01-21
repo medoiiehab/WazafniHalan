@@ -13,7 +13,7 @@ const Header = () => {
 
   const navItems = [
     { name: 'الرئيسية', path: '/', icon: Home },
-    { name: 'المدونة', path: '/blog', icon: BookOpen },
+    { name: 'نصائح الوظيفة', path: '/blog', icon: BookOpen },
     { name: 'سياسات الخصوصية', path: '/privacy', icon: Factory },
     { name: 'جميع الوظائف', path: '/all-jobs', icon: Briefcase },
     { name: 'عنا', path: '/about', icon: MailQuestion },
@@ -77,11 +77,7 @@ const Header = () => {
                     خروج
                   </button>
                 </>
-              ) : (
-                <Link to="/auth" className="btn-primary text-sm">
-                  تسجيل الدخول
-                </Link>
-              )}
+              ) : null}
             </div>
 
             {/* Mobile Menu Button */}
@@ -149,15 +145,7 @@ const Header = () => {
                     تسجيل الخروج
                   </button>
                 </>
-              ) : (
-                <Link
-                  to="/auth"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-center gap-3 px-5 py-4 rounded-xl text-lg font-medium bg-primary text-primary-foreground shadow-lg active:scale-[0.98] transition-all"
-                >
-                  تسجيل الدخول
-                </Link>
-              )}
+              ) : null}
             </nav>
           </div>
         )}

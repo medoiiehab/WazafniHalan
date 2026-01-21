@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 import RichTextEditor from "@/components/editor/RichTextEditor";
+import SEOBar from "@/components/editor/SEOBar";
 
 type TabType = "jobs" | "blog";
 
@@ -36,6 +37,7 @@ const EmployeeDashboard = () => {
   // Job form state
   const [jobForm, setJobForm] = useState({
     title: "",
+    slug: "",
     description: "",
     short_description: "",
     company: "",
@@ -83,6 +85,7 @@ const EmployeeDashboard = () => {
       setEditingJob(job);
       setJobForm({
         title: job.title,
+        slug: job.slug || "",
         description: job.description,
         short_description: job.short_description || "",
         company: job.company || "",
@@ -102,6 +105,7 @@ const EmployeeDashboard = () => {
       setEditingJob(null);
       setJobForm({
         title: "",
+        slug: "",
         description: "",
         short_description: "",
         company: "",
@@ -166,8 +170,11 @@ const EmployeeDashboard = () => {
     }
 
     try {
+      const slug = jobForm.slug.trim() || jobForm.title.toLowerCase().replace(/\s+/g, "-");
+      
       const jobData = {
         title: jobForm.title,
+        slug: slug,
         description: jobForm.description,
         short_description: jobForm.short_description || null,
         company: jobForm.company || null,
@@ -554,6 +561,23 @@ const EmployeeDashboard = () => {
                 />
               </div>
               <div>
+                <label className="block text-sm font-medium text-foreground mb-1">الرابط (Slug)</label>
+                <input
+                  type="text"
+                  value={jobForm.slug}
+                  onChange={(e) => setJobForm({ ...jobForm, slug: e.target.value })}
+                  className="input-field"
+                  dir="ltr"
+                  placeholder="يُنشأ تلقائياً من العنوان"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  سيُستخدم في رابط الوظيفة: /job/{jobForm.slug || jobForm.title.toLowerCase().replace(/\s+/g, "-")}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
                 <label className="block text-sm font-medium text-foreground mb-1">الشركة</label>
                 <input
                   type="text"
@@ -563,6 +587,7 @@ const EmployeeDashboard = () => {
                   placeholder="اسم الشركة"
                 />
               </div>
+              <div></div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -633,12 +658,14 @@ const EmployeeDashboard = () => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">الوصف الكامل *</label>
-              <textarea
-                value={jobForm.description}
-                onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
-                className="input-field min-h-[120px]"
-                placeholder="وصف تفصيلي للوظيفة"
-              />
+              <div className="h-[500px] border border-border rounded-lg overflow-hidden">
+                <RichTextEditor
+                  value={jobForm.description}
+                  onChange={(value) => setJobForm({ ...jobForm, description: value })}
+                  placeholder="وصف تفصيلي للوظيفة..."
+                  className="h-full"
+                />
+              </div>
             </div>
 
             <div>
@@ -684,6 +711,15 @@ const EmployeeDashboard = () => {
                 onChange={(e) => setJobForm({ ...jobForm, image_url: e.target.value })}
                 className="input-field"
                 placeholder="https://..."
+              />
+            </div>
+
+            <div className="mt-6">
+              <SEOBar
+                title={jobForm.title}
+                description={jobForm.short_description}
+                slug={jobForm.title.toLowerCase().replace(/\s+/g, "-")}
+                focus_keyword={jobForm.tags}
               />
             </div>
 
@@ -745,8 +781,12 @@ const EmployeeDashboard = () => {
                   value={blogForm.slug}
                   onChange={(e) => setBlogForm({ ...blogForm, slug: e.target.value })}
                   className="input-field"
+                  dir="ltr"
                   placeholder="يُنشأ تلقائياً من العنوان"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  سيُستخدم في رابط المقال: /blog/{blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
+                </p>
               </div>
             </div>
 
@@ -809,36 +849,13 @@ const EmployeeDashboard = () => {
             </div>
 
             {/* SEO Section */}
-            <div className="border border-border rounded-lg p-4 bg-muted/30">
-              <div className="flex items-center gap-2 mb-4">
-                <Globe className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-foreground">إعدادات SEO</h3>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">عنوان الصفحة (Meta Title)</label>
-                  <input
-                    type="text"
-                    value={blogForm.meta_title}
-                    onChange={(e) => setBlogForm({ ...blogForm, meta_title: e.target.value })}
-                    className="input-field"
-                    placeholder="عنوان يظهر في نتائج البحث (60 حرف كحد أقصى)"
-                    maxLength={60}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{blogForm.meta_title.length}/60 حرف</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">وصف الصفحة (Meta Description)</label>
-                  <textarea
-                    value={blogForm.meta_description}
-                    onChange={(e) => setBlogForm({ ...blogForm, meta_description: e.target.value })}
-                    className="input-field h-20"
-                    placeholder="وصف يظهر في نتائج البحث (160 حرف كحد أقصى)"
-                    maxLength={160}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{blogForm.meta_description.length}/160 حرف</p>
-                </div>
-              </div>
+            <div className="mt-6">
+              <SEOBar
+                title={blogForm.meta_title || blogForm.title}
+                description={blogForm.meta_description}
+                slug={blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
+                focus_keyword={blogForm.tags}
+              />
             </div>
 
             <div className="flex items-center gap-2">

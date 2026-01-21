@@ -47,7 +47,11 @@ Thumbs.db
 *~
 .vscode/settings.json
 .vscode/launch.json
-
+Blogging.MD
+ADSENSE_ACTIVATION_GUIDE_EN.md
+ADSENSE_SETUP_AR.md
+structure.md
+UpdateNotes.md
 # Build outputs
 .cache/
 *.tsbuildinfo

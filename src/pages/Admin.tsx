@@ -32,6 +32,7 @@ import { countries, exclusiveTagLabels, JobExclusiveTag, Job, BlogPost } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import RichTextEditor from "@/components/editor/RichTextEditor";
+import SEOBar from "@/components/editor/SEOBar";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -177,6 +178,7 @@ const Admin = () => {
   // Job form state
   const [jobForm, setJobForm] = useState({
     title: "",
+    slug: "",
     description: "",
     short_description: "",
     company: "",
@@ -228,6 +230,7 @@ const Admin = () => {
       setEditingJob(job);
       setJobForm({
         title: job.title,
+        slug: job.slug || "",
         description: job.description,
         short_description: job.short_description || "",
         company: job.company || "",
@@ -247,6 +250,7 @@ const Admin = () => {
       setEditingJob(null);
       setJobForm({
         title: "",
+        slug: "",
         description: "",
         short_description: "",
         company: "",
@@ -301,8 +305,11 @@ const Admin = () => {
 
   const handleSaveJob = async () => {
     try {
+      const slug = jobForm.slug.trim() || jobForm.title.toLowerCase().replace(/\s+/g, "-");
+      
       const jobData = {
         title: jobForm.title,
+        slug: slug,
         description: jobForm.description,
         short_description: jobForm.short_description || null,
         company: jobForm.company || null,
@@ -1437,22 +1444,37 @@ const Admin = () => {
             </div>
           )}
         </main>
-      </div>        {/* Job Modal */}
-      < Dialog open={isJobModalOpen} onOpenChange={setIsJobModalOpen} >
+      </div>
+      {/* Job Modal */}
+      <Dialog open={isJobModalOpen} onOpenChange={setIsJobModalOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingJob ? "تعديل الوظيفة" : "إضافة وظيفة جديدة"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">عنوان الوظيفة *</label>
-              <input
-                type="text"
-                value={jobForm.title}
-                onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
-                className="input-field"
-                placeholder="مثال: مطور واجهات أمامية"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">عنوان الوظيفة *</label>
+                <input
+                  type="text"
+                  value={jobForm.title}
+                  onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
+                  className="input-field"
+                  placeholder="مثال: مطور واجهات أمامية"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">الرابط (Slug)</label>
+                <input
+                  type="text"
+                  value={jobForm.slug}
+                  onChange={(e) => setJobForm({ ...jobForm, slug: e.target.value })}
+                  className="input-field text-left"
+                  dir="ltr"
+                  placeholder="يُنشأ تلقائياً من العنوان"
+                />
+                <p className="text-xs text-muted-foreground mt-1">سيُستخدم في رابط الوظيفة: /job/{jobForm.slug || jobForm.title.toLowerCase().replace(/\s+/g, "-")}</p>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -1515,11 +1537,14 @@ const Admin = () => {
 
             <div>
               <label className="block text-sm font-medium mb-2">الوصف الكامل *</label>
-              <textarea
-                value={jobForm.description}
-                onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
-                className="input-field h-32"
-              />
+              <div className="h-[500px] border border-border rounded-lg overflow-hidden">
+                <RichTextEditor
+                  value={jobForm.description}
+                  onChange={(value) => setJobForm({ ...jobForm, description: value })}
+                  placeholder="وصف تفصيلي للوظيفة..."
+                  className="h-full"
+                />
+              </div>
             </div>
 
             <div>
@@ -1584,6 +1609,15 @@ const Admin = () => {
               <p className="text-xs text-muted-foreground mt-1">اترك فارغاً لاستخدام صورة افتراضية</p>
             </div>
 
+            <div className="mt-6">
+              <SEOBar
+                title={jobForm.title}
+                description={jobForm.short_description}
+                slug={jobForm.title.toLowerCase().replace(/\s+/g, "-")}
+                focus_keyword={jobForm.tags}
+              />
+            </div>
+
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -1615,7 +1649,7 @@ const Admin = () => {
       </Dialog >
 
       {/* Blog Modal */}
-      < Dialog open={isBlogModalOpen} onOpenChange={setIsBlogModalOpen} >
+      <Dialog open={isBlogModalOpen} onOpenChange={setIsBlogModalOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingBlog ? "تعديل المقال" : "إضافة مقال جديد"}</DialogTitle>
@@ -1639,8 +1673,12 @@ const Admin = () => {
                   value={blogForm.slug}
                   onChange={(e) => setBlogForm({ ...blogForm, slug: e.target.value })}
                   className="input-field"
+                  dir="ltr"
                   placeholder="يتم إنشاؤه تلقائياً"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  سيُستخدم في رابط المقال: /blog/{blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
+                </p>
               </div>
             </div>
 
@@ -1713,38 +1751,14 @@ const Admin = () => {
                 </div>
               )}
             </div>
-
             {/* SEO Section */}
-            <div className="border border-border rounded-lg p-4 bg-muted/30">
-              <div className="flex items-center gap-2 mb-4">
-                <Globe className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold">إعدادات SEO</h3>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">عنوان الصفحة (Meta Title)</label>
-                  <input
-                    type="text"
-                    value={blogForm.meta_title}
-                    onChange={(e) => setBlogForm({ ...blogForm, meta_title: e.target.value })}
-                    className="input-field"
-                    placeholder="عنوان يظهر في نتائج البحث (60 حرف كحد أقصى)"
-                    maxLength={60}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{blogForm.meta_title.length}/60 حرف</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">وصف الصفحة (Meta Description)</label>
-                  <textarea
-                    value={blogForm.meta_description}
-                    onChange={(e) => setBlogForm({ ...blogForm, meta_description: e.target.value })}
-                    className="input-field h-20"
-                    placeholder="وصف يظهر في نتائج البحث (160 حرف كحد أقصى)"
-                    maxLength={160}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{blogForm.meta_description.length}/160 حرف</p>
-                </div>
-              </div>
+            <div className="mt-6">
+              <SEOBar
+                title={blogForm.meta_title || blogForm.title}
+                description={blogForm.meta_description}
+                slug={blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
+                focus_keyword={blogForm.tags}
+              />
             </div>
 
             <div className="flex items-center gap-2">
@@ -1777,9 +1791,9 @@ const Admin = () => {
             </div>
           </div>
         </DialogContent>
-      </Dialog >
+      </Dialog>
       {/* Ad Unit Modal */}
-      < Dialog open={isAdUnitModalOpen} onOpenChange={setIsAdUnitModalOpen} >
+      <Dialog open={isAdUnitModalOpen} onOpenChange={setIsAdUnitModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingAdUnit ? "تعديل الوحدة الإعلانية" : "إضافة وحدة إعلانية جديدة"}</DialogTitle>
