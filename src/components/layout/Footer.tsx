@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Briefcase, Mail, Phone, MapPin } from 'lucide-react';
+import { Briefcase, Mail, Phone, MapPin, Folder } from 'lucide-react';
 import { countries } from '@/types/database';
 
 const Footer = () => {
@@ -50,15 +50,15 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-background/70 text-sm">
                 <Mail className="w-4 h-4" />
-                <span>info@wazefny.com</span>
+                <span>Wazafnihalan@gmail.com</span>
               </li>
               <li className="flex items-center gap-2 text-background/70 text-sm">
-                <Phone className="w-4 h-4" />
-                <span>+965 1234 5678</span>
+                <Folder className="w-4 h-4" />
+                <span>Jobs For All</span>
               </li>
               <li className="flex items-center gap-2 text-background/70 text-sm">
                 <MapPin className="w-4 h-4" />
-                <span>الكويت، مدينة الكويت</span>
+                <span>الإمارات</span>
               </li>
             </ul>
           </div>

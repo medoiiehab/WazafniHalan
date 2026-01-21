@@ -612,9 +612,10 @@ const EmployeeDashboard = () => {
                 >
                   <option value="none">بدون وسم</option>
                   <option value="new">جديد</option>
-                  <option value="exclusive">حصري</option>
-                  <option value="high_salary">راتب مرتفع</option>
+                  <option value="best">الأفضل</option>
+                  <option value="high_pay">راتب مرتفع</option>
                   <option value="urgent">عاجل</option>
+                  <option value="featured">مميز</option>
                 </select>
               </div>
             </div>
@@ -790,7 +791,7 @@ const EmployeeDashboard = () => {
                 <RichTextEditor
                   value={blogForm.content}
                   onChange={(value) => setBlogForm({ ...blogForm, content: value })}
-                  placeholder="اكتب محتوى المقال هنا..."
+                  placeholder="Type Your Content"
                   className="h-full"
                 />
               </div>

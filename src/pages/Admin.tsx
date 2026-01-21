@@ -1660,7 +1660,7 @@ const Admin = () => {
                 <RichTextEditor
                   value={blogForm.content}
                   onChange={(value) => setBlogForm({ ...blogForm, content: value })}
-                  placeholder="اكتب محتوى المقال هنا..."
+                  placeholder="Type Your Content"
                   className="h-full"
                 />
               </div>
