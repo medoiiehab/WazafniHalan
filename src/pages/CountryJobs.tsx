@@ -93,7 +93,7 @@ const CountryJobs = () => {
         <title>وظائف {country.name} - أحدث فرص العمل {new Date().getFullYear()} | وظفني حالاً</title>
         <meta name="description" content={`ابحث عن أحدث الوظائف في ${country.name}. ${countryJobs.length} فرصة عمل متاحة الآن. تصفح وقدم على أفضل الوظائف في ${country.name}.`} />
         <meta name="keywords" content={`وظائف ${country.name}، فرص عمل ${country.name}، توظيف ${country.name}، شواغر ${country.name}`} />
-        <link rel="canonical" href={`https://wazfni-now.com/jobs/${country.slug}`} />
+        <link rel="canonical" href={`https://www.wazafnihalan.com/jobs/${country.slug}`} />
         <meta property="og:title" content={`وظائف ${country.name} - ${countryJobs.length} فرصة عمل متاحة`} />
         <meta property="og:description" content={`ابحث عن أحدث الوظائف في ${country.name}. ${countryJobs.length} فرصة عمل متاحة الآن.`} />
         <meta property="og:type" content="website" />

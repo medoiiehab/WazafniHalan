@@ -80,7 +80,7 @@ const Footer = () => {
               {countries.map((country) => (
                 <Link
                   key={country.slug}
-                  to={`/all-jobs?country=${country.slug}`}
+                  to={`/jobs/${country.slug}`}
                   className="text-background/70 hover:text-primary transition-colors text-sm flex items-center gap-2 group"
                 >
                   <span className="grayscale group-hover:grayscale-0 transition-all">{country.flag}</span>

@@ -60,18 +60,18 @@ const Index = () => {
           content="بوابة التوظيف الأولى في الوطن العربي. ابحث عن أحدث الوظائف في الكويت، السعودية، الإمارات، قطر، عمان، البحرين ومصر. آلاف الفرص المتجددة يومياً للمواطنين والوافدين."
         />
         <meta name="keywords" content="وظائف الخليج، وظائف الكويت اليوم، وظائف السعودية ٢٠٢٤، وظائف دبي، وظائف قطر، عمل، توظيف، فرص عمل للمصريين، وظائف شاغرة، البحث عن عمل" />
-        <link rel="canonical" href="https://wazfni-now.com" />
+        <link rel="canonical" href="https://www.wazafnihalan.com" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://wazfni-now.com" />
+        <meta property="og:url" content="https://www.wazafnihalan.com" />
         <meta property="og:title" content="وظفني حالاً | محرك البحث الأول لوظائف الخليج ومصر" />
         <meta property="og:description" content="آلاف الفرص الوظيفية بانتظارك. منصة واحدة تجمع لك أحدث فرص العمل في دول الخليج العربي ومصر." />
-        <meta property="og:image" content="https://wazfni-now.com/og-image.jpg" />
+        <meta property="og:image" content="https://www.wazafnihalan.com/og-image.jpg" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://wazfni-now.com" />
+        <meta property="twitter:url" content="https://www.wazafnihalan.com" />
         <meta property="twitter:title" content="وظفني حالاً | أحدث وظائف الخليج" />
         <meta property="twitter:description" content="ابحث عن وظيفتك القادمة الآن في الكويت والسعودية والإمارات." />
 
@@ -81,11 +81,11 @@ const Index = () => {
             "@type": "WebSite",
             "name": "وظفني حالاً",
             "alternateName": "Wazafni Halan",
-            "url": "https://wazfni-now.com",
+            "url": "https://www.wazafnihalan.com",
             "description": "منصة البحث عن الوظائف في الخليج العربي ومصر",
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "https://wazfni-now.com/?search={search_term_string}",
+              "target": "https://www.wazafnihalan.com/?search={search_term_string}",
               "query-input": "required name=search_term_string"
             }
           })}
@@ -151,7 +151,7 @@ const Index = () => {
           <div className="space-y-1">
             <div className="flex items-center justify-center gap-2 text-primary">
               <Briefcase className="w-5 h-5 md:w-6 md:h-6" />
-              <span className="text-xl md:text-2xl font-bold">١,٢٠٠+</span>
+              <span className="text-xl md:text-2xl font-bold">١,٠٠٠+</span>
             </div>
             <p className="text-sm text-muted-foreground font-medium">وظيفة شاغرة</p>
           </div>
@@ -255,7 +255,7 @@ const Index = () => {
                 {countriesWithJobCount.map((country) => (
                   <button
                     key={country.slug}
-                    onClick={() => setSelectedCountry(country.slug)}
+                    onClick={() => setSelectedCountry(prev => prev === country.slug ? 'all' : country.slug)}
                     className={`group relative overflow-hidden p-6 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3 ${selectedCountry === country.slug
                       ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105'
                       : 'bg-card text-foreground border-border hover:border-primary/50 hover:shadow-md'
@@ -371,17 +371,27 @@ const Index = () => {
 
           {/* Call to Action Section */}
           <section className="container-custom px-4 mb-16 md:mb-24">
-            <div className="bg-primary rounded-[2rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-primary/20">
+            <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-primary/20 bg-primary group">
+              {/* Section Background Image */}
+              <div
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 group-hover:scale-110 opacity-40"
+                style={{
+                  backgroundImage: "url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/dfb430a7-2410-42ab-9748-17ff0353bac5/dbybn6x-a81b5f5f-4525-4a45-9d8f-b1b53f8e3043.png/v1/fill/w_1192,h_670,q_70,strp/diamond_pattern_by_lazururh_dbybn6x-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MjE2MCIsInBhdGgiOiIvZi9kZmI0MzBhNy0yNDEwLTQyYWItOTc0OC0xN2ZmMDM1M2JhYzUvZGJ5Ym42eC1hODFiNWY1Zi00NTI1LTRhNDUtOWQ4Zi1iMWI1M2Y4ZTMwNDMucG5nIiwid2lkdGgiOiI8PTM4NDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.VnZxVJy01oPvLiY0yV0G_eGmQsoji-9XVKQXnx4gcd4')",
+                }}
+              />
+              {/* Overlay Gradient */}
+              <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary via-primary/80 to-blue-900/40" />
+
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
 
-              <div className="relative z-10 max-w-2xl mx-auto">
+              <div className="relative z-10 p-8 md:p-16 text-center text-white max-w-2xl mx-auto">
                 <h2 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight">مستعد لبدء مسيرتك المهنية؟</h2>
-                <p className="text-lg md:text-xl text-blue-100 mb-10 leading-relaxed opacity-90">
+                <p className="text-lg md:text-xl text-blue-50 mb-10 leading-relaxed opacity-90">
                   لا تضيع المزيد من الوقت. آلاف الشركات تبحث عن موهبتك الآن في أكبر منصة وظائف بالخليج.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link to="/all-jobs" className="w-full sm:w-auto bg-white text-primary font-bold px-10 py-4 rounded-xl hover:bg-blue-50 transition-all shadow-lg text-lg">
+                  <Link to="/all-jobs" className="w-full sm:w-auto bg-white text-primary font-bold px-10 py-4 rounded-xl hover:bg-blue-50 transition-all shadow-lg text-lg transform hover:-translate-y-1 active:scale-95">
                     تصفح كافة الوظائف
                   </Link>
 

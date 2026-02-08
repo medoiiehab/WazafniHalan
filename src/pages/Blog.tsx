@@ -18,7 +18,7 @@ const Blog = () => {
         <title>المدونة - نصائح ومقالات عن سوق العمل | وظفني حالاً</title>
         <meta name="description" content="اقرأ أحدث المقالات والنصائح حول البحث عن وظيفة في الخليج العربي. نصائح للمقابلات، كتابة السيرة الذاتية، والمزيد." />
         <meta name="keywords" content="مقالات وظائف، نصائح توظيف، سيرة ذاتية، مقابلة عمل، سوق العمل الخليج" />
-        <link rel="canonical" href="https://wazfni-now.com/blog" />
+        <link rel="canonical" href="https://www.wazafnihalan.com/blog" />
         <meta property="og:title" content="المدونة - نصائح ومقالات عن سوق العمل" />
         <meta property="og:description" content="اقرأ أحدث المقالات والنصائح حول البحث عن وظيفة في الخليج العربي." />
         <meta property="og:type" content="website" />

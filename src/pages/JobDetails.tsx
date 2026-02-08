@@ -70,7 +70,7 @@ const JobDetails = () => {
         <title>{job.title} | وظائف {job.country} | وظفني حالاً</title>
         <meta name="description" content={job.short_description || job.description.slice(0, 160)} />
         <meta name="keywords" content={`${job.title}، وظائف ${job.country}، ${job.company || ''}، فرص عمل`} />
-        <link rel="canonical" href={`https://wazfni-now.com/job/${job.id}`} />
+        <link rel="canonical" href={`https://www.wazafnihalan.com/job/${job.id}`} />
         <meta property="og:title" content={`${job.title} - ${job.company || 'وظيفة جديدة'}`} />
         <meta property="og:description" content={job.short_description || job.description.slice(0, 160)} />
         <meta property="og:type" content="website" />
@@ -142,7 +142,7 @@ const JobDetails = () => {
               <div className="p-6 space-y-6">
                 <section>
                   <h2 className="text-xl font-bold text-foreground mb-3">وصف الوظيفة</h2>
-                  <div 
+                  <div
                     className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: job.description }}
                   />

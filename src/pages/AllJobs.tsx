@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Search, Loader2, Filter, X, MapPin, Building2, Calendar } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import JobCard from '@/components/jobs/JobCard';
 import AdSense from '@/components/common/AdSense';
@@ -9,12 +9,20 @@ import { useJobs } from '@/hooks/useJobs';
 import { countries } from '@/types/database';
 
 const AllJobs = () => {
+    const { countrySlug } = useParams<{ countrySlug?: string }>();
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
     const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest');
+
+    // Handle countrySlug from URL
+    useEffect(() => {
+        if (countrySlug) {
+            setSelectedCountries([countrySlug]);
+        }
+    }, [countrySlug]);
 
     const { data: allJobs = [], isLoading, error } = useJobs();
 
@@ -171,7 +179,7 @@ const AllJobs = () => {
                     content={`تصفح جميع الوظائف المتاحة في دول الخليج العربي ومصر. ${allJobs.length} فرصة عمل في مختلف المجالات والتخصصات. ابحث عن وظيفتك المثالية الآن.`}
                 />
                 <meta name="keywords" content="جميع الوظائف، فرص عمل، وظائف الخليج، وظائف الشرق الأوسط، توظيف، وظائف شاغرة" />
-                <link rel="canonical" href="https://wazfni-now.com/all-jobs" />
+                <link rel="canonical" href="https://www.wazafnihalan.com/all-jobs" />
             </Helmet>
 
             {/* Hero Section */}
@@ -354,160 +362,160 @@ const AllJobs = () => {
                     {/* Jobs List */}
                     <div className="flex-1">
                         <div>
-                        {/* Search Results Summary */}
-                        {searchTerm.trim() && (
-                            <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-6">
-                                <p className="text-sm text-foreground">
-                                    <span className="font-semibold">نتائج البحث</span> عن "<span className="font-bold text-green-700 dark:text-green-300">{searchTerm}</span>": 
-                                    <span className="font-bold text-green-700 dark:text-green-300 mr-1">{filteredJobs.length}</span> وظيفة متطابقة
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Active Filters Bar */}
-                        {(hasActiveFilters || isLoading) && (
-                            <div className="bg-card rounded-xl shadow-sm border border-border p-4 mb-6">
-                                <div className="flex flex-wrap items-center justify-between gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="text-sm font-medium text-foreground">
-                                            {isLoading ? 'جاري التحميل...' : `${filteredJobs.length} وظيفة`}
-                                        </h3>
-                                        {hasActiveFilters && (
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedCountries.length > 0 && (
-                                                    <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
-                                                        {selectedCountries.length} دولة
-                                                        <button
-                                                            onClick={() => setSelectedCountries([])}
-                                                            className="hover:text-primary/70"
-                                                        >
-                                                            <X className="w-3 h-3" />
-                                                        </button>
-                                                    </span>
-                                                )}
-                                                {selectedCompanies.length > 0 && (
-                                                    <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 text-sm px-3 py-1 rounded-full">
-                                                        {selectedCompanies.length} شركة
-                                                        <button
-                                                            onClick={() => setSelectedCompanies([])}
-                                                            className="hover:text-purple-500"
-                                                        >
-                                                            <X className="w-3 h-3" />
-                                                        </button>
-                                                    </span>
-                                                )}
-                                                {searchTerm.trim() && (
-                                                    <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full font-medium">
-                                                        🔍 "{searchTerm.substring(0, 15)}{searchTerm.length > 15 ? '...' : ''}"
-                                                        <button
-                                                            onClick={() => setSearchTerm('')}
-                                                            className="hover:text-green-500"
-                                                        >
-                                                            <X className="w-3 h-3" />
-                                                        </button>
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                    {hasActiveFilters && (
-                                        <button
-                                            onClick={clearFilters}
-                                            className="text-sm text-primary hover:underline flex items-center gap-1"
-                                        >
-                                            <X className="w-4 h-4" />
-                                            مسح الفلاتر
-                                        </button>
-                                    )}
+                            {/* Search Results Summary */}
+                            {searchTerm.trim() && (
+                                <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-6">
+                                    <p className="text-sm text-foreground">
+                                        <span className="font-semibold">نتائج البحث</span> عن "<span className="font-bold text-green-700 dark:text-green-300">{searchTerm}</span>":
+                                        <span className="font-bold text-green-700 dark:text-green-300 mr-1">{filteredJobs.length}</span> وظيفة متطابقة
+                                    </p>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-
-
-                        {/* AdSense - Rectangle Ad */}
-                        <div className="my-6 md:my-8 overflow-hidden">
-                            <AdSense size="rectangle" placement="all_jobs_middle" />
-                        </div>
-
-                        {/* Jobs Grid/List */}
-                        {isLoading ? (
-                            <div className="flex justify-center items-center py-12">
-                                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                            </div>
-                        ) : filteredJobs.length > 0 ? (
-                            <>
-                                {/* Mobile View - List */}
-                                <div className="lg:hidden space-y-4">
-                                    {filteredJobs.map((job) => (
-                                        <div key={job.id} className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-                                            <Link to={`/job/${job.id}`} className="block p-4">
-                                                <div className="flex items-center gap-3 mb-3">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
-                                                            {job.country}
-                                                        </span>
-                                                        {job.is_featured && (
-                                                            <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                                                                مميز
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <h3 className="text-lg font-bold text-foreground mb-2 line-clamp-2">
-                                                    {job.title}
-                                                </h3>
-
-                                                <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
-                                                    {job.company && (
-                                                        <span className="flex items-center gap-1">
-                                                            <Building2 className="w-4 h-4" />
-                                                            {job.company}
+                            {/* Active Filters Bar */}
+                            {(hasActiveFilters || isLoading) && (
+                                <div className="bg-card rounded-xl shadow-sm border border-border p-4 mb-6">
+                                    <div className="flex flex-wrap items-center justify-between gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="text-sm font-medium text-foreground">
+                                                {isLoading ? 'جاري التحميل...' : `${filteredJobs.length} وظيفة`}
+                                            </h3>
+                                            {hasActiveFilters && (
+                                                <div className="flex flex-wrap gap-2">
+                                                    {selectedCountries.length > 0 && (
+                                                        <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">
+                                                            {selectedCountries.length} دولة
+                                                            <button
+                                                                onClick={() => setSelectedCountries([])}
+                                                                className="hover:text-primary/70"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
                                                         </span>
                                                     )}
-                                                    <span className="flex items-center gap-1">
-                                                        <Calendar className="w-4 h-4" />
-                                                        {new Date(job.created_at).toLocaleDateString('ar-SA')}
-                                                    </span>
+                                                    {selectedCompanies.length > 0 && (
+                                                        <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 text-sm px-3 py-1 rounded-full">
+                                                            {selectedCompanies.length} شركة
+                                                            <button
+                                                                onClick={() => setSelectedCompanies([])}
+                                                                className="hover:text-purple-500"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
+                                                        </span>
+                                                    )}
+                                                    {searchTerm.trim() && (
+                                                        <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full font-medium">
+                                                            🔍 "{searchTerm.substring(0, 15)}{searchTerm.length > 15 ? '...' : ''}"
+                                                            <button
+                                                                onClick={() => setSearchTerm('')}
+                                                                className="hover:text-green-500"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
+                                                        </span>
+                                                    )}
                                                 </div>
-
-                                                {job.salary && (
-                                                    <p className="text-primary font-bold text-lg">
-                                                        {job.salary}
-                                                    </p>
-                                                )}
-                                            </Link>
+                                            )}
                                         </div>
-                                    ))}
+                                        {hasActiveFilters && (
+                                            <button
+                                                onClick={clearFilters}
+                                                className="text-sm text-primary hover:underline flex items-center gap-1"
+                                            >
+                                                <X className="w-4 h-4" />
+                                                مسح الفلاتر
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
+                            )}
 
-                                {/* Desktop View - Grid */}
-                                <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {filteredJobs.map((job) => (
-                                        <JobCard key={job.id} job={job} />
-                                    ))}
-                                </div>
-                            </>
-                        ) : (
-                            <div className="text-center py-12 bg-card rounded-xl border border-border">
-                                <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <Search className="w-8 h-8 text-muted-foreground" />
-                                </div>
-                                <h3 className="text-lg font-medium text-foreground mb-2">
-                                    لا توجد نتائج
-                                </h3>
-                                <p className="text-muted-foreground mb-4">
-                                    لم نتمكن من العثور على وظائف تطابق معايير البحث
-                                </p>
-                                <button
-                                    onClick={clearFilters}
-                                    className="btn-primary px-6 py-2"
-                                >
-                                    عرض جميع الوظائف
-                                </button>
+
+
+                            {/* AdSense - Rectangle Ad */}
+                            <div className="my-6 md:my-8 overflow-hidden">
+                                <AdSense size="rectangle" placement="all_jobs_middle" />
                             </div>
-                        )}
+
+                            {/* Jobs Grid/List */}
+                            {isLoading ? (
+                                <div className="flex justify-center items-center py-12">
+                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                </div>
+                            ) : filteredJobs.length > 0 ? (
+                                <>
+                                    {/* Mobile View - List */}
+                                    <div className="lg:hidden space-y-4">
+                                        {filteredJobs.map((job) => (
+                                            <div key={job.id} className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                                                <Link to={`/job/${job.id}`} className="block p-4">
+                                                    <div className="flex items-center gap-3 mb-3">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
+                                                                {job.country}
+                                                            </span>
+                                                            {job.is_featured && (
+                                                                <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                                                                    مميز
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <h3 className="text-lg font-bold text-foreground mb-2 line-clamp-2">
+                                                        {job.title}
+                                                    </h3>
+
+                                                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                                                        {job.company && (
+                                                            <span className="flex items-center gap-1">
+                                                                <Building2 className="w-4 h-4" />
+                                                                {job.company}
+                                                            </span>
+                                                        )}
+                                                        <span className="flex items-center gap-1">
+                                                            <Calendar className="w-4 h-4" />
+                                                            {new Date(job.created_at).toLocaleDateString('ar-SA')}
+                                                        </span>
+                                                    </div>
+
+                                                    {job.salary && (
+                                                        <p className="text-primary font-bold text-lg">
+                                                            {job.salary}
+                                                        </p>
+                                                    )}
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Desktop View - Grid */}
+                                    <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {filteredJobs.map((job) => (
+                                            <JobCard key={job.id} job={job} />
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center py-12 bg-card rounded-xl border border-border">
+                                    <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Search className="w-8 h-8 text-muted-foreground" />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-foreground mb-2">
+                                        لا توجد نتائج
+                                    </h3>
+                                    <p className="text-muted-foreground mb-4">
+                                        لم نتمكن من العثور على وظائف تطابق معايير البحث
+                                    </p>
+                                    <button
+                                        onClick={clearFilters}
+                                        className="btn-primary px-6 py-2"
+                                    >
+                                        عرض جميع الوظائف
+                                    </button>
+                                </div>
+                            )}
 
 
                         </div>

@@ -14,7 +14,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://wazfni-now.com/sitemap.xml
+Sitemap: https://www.wazafnihalan.com/sitemap.xml
 
 # Disallow admin pages
 Disallow: /admin

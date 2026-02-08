@@ -68,7 +68,7 @@ const StaticPages = () => {
             جميع الشعارات والصور الخاصة بالجهات والشركات هي ملكية حصرية لأصحابها فقط، ولا يتحمل موقع وظفني حالاً أي مسؤولية قانونية تجاه استخدامها، حيث تُعرض فقط لتسهيل وصول المعلومة للقارئ.
           </p>
           <p className="mb-4 leading-relaxed">
-            وفي حال اعتراض أي جهة على استخدام شعارها أو صورتها، يمكنها مراسلتنا عبر بريدها الإلكتروني الرسمي إلى: <a href="mailto:info@wazfni-now.com" className="text-primary hover:underline" dir="ltr">info@wazfni-now.com</a>
+            وفي حال اعتراض أي جهة على استخدام شعارها أو صورتها، يمكنها مراسلتنا عبر بريدها الإلكتروني الرسمي إلى: <a href="mailto:info@www.wazafnihalan.com" className="text-primary hover:underline" dir="ltr">info@www.wazafnihalan.com</a>
           </p>
           <p className="mb-4 leading-relaxed">
             وسيتم إزالة الشعار أو الصورة عند الحاجة، مع توضيح سبب الاعتراض إن أمكن.
@@ -138,15 +138,15 @@ const StaticPages = () => {
       <Helmet>
         <title>{page.title} | وظفني حالاً</title>
         <meta name="description" content={`${page.title} - موقع وظفني حالاً للبحث عن الوظائف في الخليج العربي ومصر`} />
-        <link rel="canonical" href={`https://wazfni-now.com${path}`} />
+        <link rel="canonical" href={`https://www.wazafnihalan.com${path}`} />
       </Helmet>
 
-     
+
       <div className="container-custom py-12">
         <div className="max-w-3xl">
           <h1 className="text-3xl font-bold text-foreground mb-8">{page.title}</h1>
 
-        
+
           <div className="bg-card rounded-xl p-6 md:p-8 border border-border">
             {page.content}
           </div>
