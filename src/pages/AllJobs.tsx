@@ -3,8 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { Search, Loader2, Filter, X, MapPin, Building2, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
-
 import JobCard from '@/components/jobs/JobCard';
+import AdSense from '@/components/common/AdSense';
 import { useJobs } from '@/hooks/useJobs';
 import { countries } from '@/types/database';
 
@@ -12,6 +12,7 @@ const AllJobs = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+    const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest');
 
@@ -43,10 +44,11 @@ const AllJobs = () => {
                 const matchesTitle = job?.title?.toLowerCase().includes(searchLower) || false;
                 const matchesCompany = job?.company?.toLowerCase().includes(searchLower) || false;
                 const matchesDescription = job?.description?.toLowerCase().includes(searchLower) || false;
+                const matchesCountry = job?.country?.toLowerCase().includes(searchLower) || false;
                 const matchesTags = Array.isArray(job?.tags)
                     ? job.tags.some(tag => tag?.toLowerCase().includes(searchLower))
                     : false;
-                return matchesTitle || matchesCompany || matchesDescription || matchesTags;
+                return matchesTitle || matchesCompany || matchesDescription || matchesCountry || matchesTags;
             });
         }
 
@@ -54,6 +56,13 @@ const AllJobs = () => {
         if (selectedCountries.length > 0) {
             filtered = filtered.filter((job) =>
                 job?.country_slug && selectedCountries.includes(job.country_slug)
+            );
+        }
+
+        // Filter by selected companies
+        if (selectedCompanies.length > 0) {
+            filtered = filtered.filter((job) =>
+                job?.company && selectedCompanies.includes(job.company)
             );
         }
 
@@ -70,7 +79,7 @@ const AllJobs = () => {
         });
 
         return filtered;
-    }, [allJobs, debouncedSearch, selectedCountries, sortBy]);
+    }, [allJobs, debouncedSearch, selectedCountries, selectedCompanies, sortBy]);
 
     // Calculate job counts per country
     const countriesWithJobCount = useMemo(() => {
@@ -87,6 +96,22 @@ const AllJobs = () => {
         });
     }, [allJobs]);
 
+    // Calculate job counts per company
+    const companiesWithJobCount = useMemo(() => {
+        if (!Array.isArray(allJobs)) return [];
+
+        const companyMap = new Map<string, number>();
+        allJobs.forEach((job) => {
+            if (job?.company) {
+                companyMap.set(job.company, (companyMap.get(job.company) || 0) + 1);
+            }
+        });
+
+        return Array.from(companyMap.entries())
+            .map(([company, jobCount]) => ({ company, jobCount }))
+            .sort((a, b) => b.jobCount - a.jobCount);
+    }, [allJobs]);
+
     // Toggle country selection
     const toggleCountry = (countrySlug: string) => {
         setSelectedCountries(prev =>
@@ -96,14 +121,24 @@ const AllJobs = () => {
         );
     };
 
+    // Toggle company selection
+    const toggleCompany = (company: string) => {
+        setSelectedCompanies(prev =>
+            prev.includes(company)
+                ? prev.filter(c => c !== company)
+                : [...prev, company]
+        );
+    };
+
     // Clear all filters
     const clearFilters = () => {
         setSearchTerm('');
         setSelectedCountries([]);
+        setSelectedCompanies([]);
         setSortBy('newest');
     };
 
-    const hasActiveFilters = searchTerm.trim() || selectedCountries.length > 0;
+    const hasActiveFilters = searchTerm.trim() || selectedCountries.length > 0 || selectedCompanies.length > 0;
 
     if (error) {
         return (
@@ -157,7 +192,7 @@ const AllJobs = () => {
                             <div className="relative flex-1">
                                 <input
                                     type="text"
-                                    placeholder="ابحث عن وظيفة، شركة، مجال..."
+                                    placeholder="ابحث عن وظيفة، شركة، دولة، مجال..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full bg-transparent border-0 text-white placeholder-white/70 focus:outline-none focus:ring-0 pr-10 py-3 text-base sm:text-lg"
@@ -165,9 +200,17 @@ const AllJobs = () => {
                                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70" />
                             </div>
                         </div>
+                        <p className="text-xs sm:text-sm text-white/60 mt-2 text-center">
+                            ابحث في: العناوين • الشركات • الدول • الوسوم • الوصف
+                        </p>
                     </div>
                 </div>
             </section>
+
+            {/* AdSense - After Hero Section */}
+            <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                <AdSense size="leaderboard" placement="all_jobs_top" />
+            </div>
 
             {/* Mobile Filter Button */}
             <div className="lg:hidden container-custom px-4 sm:px-6 lg:px-8 py-4">
@@ -248,6 +291,35 @@ const AllJobs = () => {
                                 </div>
                             </div>
 
+                            {/* Companies Filter */}
+                            <div className="mb-6">
+                                <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                                    <Building2 className="w-4 h-4" />
+                                    الشركات
+                                </h3>
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                                    {companiesWithJobCount.map((item) => (
+                                        <label
+                                            key={item.company}
+                                            className="flex items-center justify-between p-2 hover:bg-accent/10 rounded-lg cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedCompanies.includes(item.company)}
+                                                    onChange={() => toggleCompany(item.company)}
+                                                    className="rounded border-border text-primary focus:ring-primary"
+                                                />
+                                                <span className="text-foreground">{item.company}</span>
+                                            </div>
+                                            <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                                {item.jobCount}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
                             {/* Sorting */}
                             <div>
                                 <h3 className="font-medium text-foreground mb-3">ترتيب حسب</h3>
@@ -281,6 +353,17 @@ const AllJobs = () => {
 
                     {/* Jobs List */}
                     <div className="flex-1">
+                        <div>
+                        {/* Search Results Summary */}
+                        {searchTerm.trim() && (
+                            <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-6">
+                                <p className="text-sm text-foreground">
+                                    <span className="font-semibold">نتائج البحث</span> عن "<span className="font-bold text-green-700 dark:text-green-300">{searchTerm}</span>": 
+                                    <span className="font-bold text-green-700 dark:text-green-300 mr-1">{filteredJobs.length}</span> وظيفة متطابقة
+                                </p>
+                            </div>
+                        )}
+
                         {/* Active Filters Bar */}
                         {(hasActiveFilters || isLoading) && (
                             <div className="bg-card rounded-xl shadow-sm border border-border p-4 mb-6">
@@ -302,12 +385,23 @@ const AllJobs = () => {
                                                         </button>
                                                     </span>
                                                 )}
+                                                {selectedCompanies.length > 0 && (
+                                                    <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 text-sm px-3 py-1 rounded-full">
+                                                        {selectedCompanies.length} شركة
+                                                        <button
+                                                            onClick={() => setSelectedCompanies([])}
+                                                            className="hover:text-purple-500"
+                                                        >
+                                                            <X className="w-3 h-3" />
+                                                        </button>
+                                                    </span>
+                                                )}
                                                 {searchTerm.trim() && (
-                                                    <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">
-                                                        "{searchTerm}"
+                                                    <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full font-medium">
+                                                        🔍 "{searchTerm.substring(0, 15)}{searchTerm.length > 15 ? '...' : ''}"
                                                         <button
                                                             onClick={() => setSearchTerm('')}
-                                                            className="hover:text-blue-500"
+                                                            className="hover:text-green-500"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -330,6 +424,11 @@ const AllJobs = () => {
                         )}
 
 
+
+                        {/* AdSense - Rectangle Ad */}
+                        <div className="my-6 md:my-8 overflow-hidden">
+                            <AdSense size="rectangle" placement="all_jobs_middle" />
+                        </div>
 
                         {/* Jobs Grid/List */}
                         {isLoading ? (
@@ -411,8 +510,14 @@ const AllJobs = () => {
                         )}
 
 
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            {/* AdSense - Before Footer */}
+            <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                <AdSense size="leaderboard" placement="all_jobs_bottom" />
             </div>
 
             {/* Mobile Filters Modal */}
@@ -470,6 +575,35 @@ const AllJobs = () => {
                                                 </div>
                                                 <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
                                                     {country.jobCount}
+                                                </span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Companies Filter */}
+                                <div>
+                                    <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                                        <Building2 className="w-4 h-4" />
+                                        الشركات
+                                    </h3>
+                                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                                        {companiesWithJobCount.map((item) => (
+                                            <label
+                                                key={item.company}
+                                                className="flex items-center justify-between p-3 hover:bg-accent/10 rounded-lg cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedCompanies.includes(item.company)}
+                                                        onChange={() => toggleCompany(item.company)}
+                                                        className="rounded border-border text-primary focus:ring-primary"
+                                                    />
+                                                    <span className="text-foreground">{item.company}</span>
+                                                </div>
+                                                <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                                    {item.jobCount}
                                                 </span>
                                             </label>
                                         ))}

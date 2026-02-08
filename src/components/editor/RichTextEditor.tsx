@@ -9,11 +9,21 @@ interface RichTextEditorProps {
   className?: string;
 }
 
-// Auto-detect direction based on content
+// Auto-detect direction based on content --Updated to remove HTML tags and entities
 const getDirection = (text: string): "rtl" | "ltr" => {
   if (!text) return "ltr";
+  
+  // Remove ALL HTML tags and entities
+  const plainText = text
+    .replace(/<[^>]+>/g, '')  // Remove HTML tags
+    .replace(/&[a-z]+;/g, '') // Remove HTML entities (&nbsp;, &lt;, etc.)
+    .trim();
+  
+  if (plainText.length === 0) return "ltr";
+  
   const arabicPattern = /[\u0600-\u06FF]/;
-  return arabicPattern.test(text.slice(0, 20)) ? "rtl" : "ltr";
+  // Check the first non-whitespace characters
+  return arabicPattern.test(plainText.slice(0, 20)) ? "rtl" : "ltr";
 };
 
 const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTextEditorProps) => {

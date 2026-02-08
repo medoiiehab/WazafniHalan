@@ -44,7 +44,7 @@ const BlogPost = () => {
       </Helmet>
 
       {/* AdSense 1 - Top Leaderboard */}
-      <div className="py-4 bg-muted">
+      <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <AdSense size="leaderboard" placement="blog_post_top" />
       </div>
 
@@ -59,9 +59,6 @@ const BlogPost = () => {
 
         <div className="flex flex-col lg:flex-row gap-8 justify-center">
           <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
-            {/* AdSense 2 - Before Article */}
-            <AdSense size="inline" className="mb-8" placement="blog_banner_1" />
-
             <article className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
               <div className="aspect-video bg-muted relative">
                 {post.image_url ? (
@@ -88,27 +85,20 @@ const BlogPost = () => {
 
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{post.title}</h1>
 
-                {/* AdSense 3 - In Article */}
-                <AdSense size="inline" className="mb-6" placement="blog_post_in_article_1" />
-
                 <div
-                  className="prose prose-lg max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap dark:prose-invert 
+                  className="prose prose-lg max-w-none text-muted-foreground leading-relaxed dark:prose-invert 
                   prose-headings:text-foreground prose-a:text-primary prose-strong:text-foreground
                   prose-img:rounded-xl prose-img:w-full prose-img:object-cover"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
-                {/* AdSense 4 - Mid Article */}
-                <AdSense size="rectangle" className="my-6 mx-auto" placement="blog_post_in_article_1" />
+                {/* AdSense 2 - Mid Article */}
+                <div className="my-8 md:my-10 overflow-hidden">
+                  <AdSense size="rectangle" placement="blog_post_middle" />
+                </div>
 
               </div>
             </article>
-
-            {/* AdSense 5 - After Article */}
-            <AdSense size="leaderboard" className="mt-8" placement="blog_banner_1" />
-
-            {/* AdSense 6 - Large Rectangle */}
-            <AdSense size="large-rectangle" className="mt-8 mx-auto" placement="home_large_rect" />
 
             {relatedPosts.length > 0 && (
               <section className="mt-12">
@@ -124,20 +114,12 @@ const BlogPost = () => {
               </section>
             )}
 
-            {/* AdSense 7 - After Related */}
-            <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
+            {/* AdSense 3 - Before Footer */}
+            <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden mt-8">
+              <AdSense size="leaderboard" placement="blog_post_bottom" />
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* AdSense 8 - Before Footer */}
-      <div className="py-4">
-        <AdSense size="leaderboard" placement="footer_top" />
-      </div>
-
-      {/* AdSense 9 - Extra Banner */}
-      <div className="py-4">
-        <AdSense size="banner" placement="footer_top" />
       </div>
     </Layout>
   );

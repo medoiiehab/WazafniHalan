@@ -32,18 +32,11 @@ const Blog = () => {
       </section>
 
       {/* AdSense 1 - After Hero */}
-      <div className="py-4">
+      <div className="py-4 overflow-hidden">
         <AdSense size="leaderboard" placement="blog_top" />
       </div>
 
-      {/* AdSense 2 - Banner */}
-      <div className="py-4">
-        <AdSense size="banner" placement="blog_banner_1" />
-      </div>
-
       <div className="container-custom py-12">
-        {/* AdSense 3 - Before Content */}
-        <AdSense size="inline" className="mb-8" placement="blog_top" />
 
         {isLoading ? (
           <div className="flex justify-center py-12">
@@ -77,36 +70,20 @@ const Blog = () => {
                     <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formatDate(post.created_at)}</span>
                   </div>
                 </Link>
-                {/* AdSense 4, 5, 6 - Between Posts */}
-                {index === 1 && blogPosts.length > 2 && <AdSense size="rectangle" className="mt-6" placement="home_large_rect" />}
-                {index === 3 && blogPosts.length > 4 && <AdSense size="inline" className="mt-6" placement="home_mid_content_1" />}
-                {index === 5 && blogPosts.length > 6 && <AdSense size="rectangle" className="mt-6" placement="home_large_rect" />}
               </div>
             ))}
           </div>
         )}
 
-        {/* AdSense 7 - After Posts */}
-        <AdSense size="leaderboard" className="mt-8" placement="home_after_latest" />
-
-        {/* AdSense 8 - Large Rectangle */}
-        <AdSense size="large-rectangle" className="mt-8 mx-auto" placement="home_large_rect" />
-
-        {/* AdSense 9 - Inline */}
-        <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
-
-        {/* AdSense 10 - Rectangle */}
-        <AdSense size="rectangle" className="mt-8 mx-auto" placement="home_large_rect" />
+        {/* AdSense 2 - In Middle of Content */}
+        <div className="my-8 md:my-10 overflow-hidden">
+          <AdSense size="rectangle" placement="blog_middle" />
+        </div>
       </div>
 
-      {/* AdSense 11 - Before Footer */}
-      <div className="py-4">
-        <AdSense size="leaderboard" placement="footer_top" />
-      </div>
-
-      {/* AdSense 12 - Extra Banner */}
-      <div className="py-4">
-        <AdSense size="banner" placement="footer_top" />
+      {/* AdSense 3 - Before Footer */}
+      <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <AdSense size="leaderboard" placement="blog_bottom" />
       </div>
     </Layout>
   );

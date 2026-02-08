@@ -99,13 +99,8 @@ const JobDetails = () => {
       </Helmet>
 
       {/* AdSense 1 - Top Leaderboard */}
-      <div className="py-4 bg-muted">
+      <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <AdSense size="leaderboard" placement="job_details_top" />
-      </div>
-
-      {/* AdSense 2 - Banner */}
-      <div className="py-4">
-        <AdSense size="banner" placement="job_details_banner_1" />
       </div>
 
       <div className="container-custom py-8">
@@ -117,9 +112,6 @@ const JobDetails = () => {
 
         <div className="flex flex-col lg:flex-row gap-8 justify-center">
           <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
-            {/* AdSense 3 - Before Article */}
-            <AdSense size="inline" className="mb-6" placement="job_details_banner_1" />
-
             <article className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
               {/* Job Header Image */}
               <div className="w-full h-64 overflow-hidden">
@@ -147,17 +139,19 @@ const JobDetails = () => {
                 {job.salary && <p className="flex items-center gap-2 text-primary font-bold text-xl mt-4"><Banknote className="w-5 h-5" />{job.salary}</p>}
               </div>
 
-              {/* AdSense 4 - In Article */}
-              <AdSense size="inline" className="m-6" placement="job_details_banner_1" />
-
               <div className="p-6 space-y-6">
                 <section>
                   <h2 className="text-xl font-bold text-foreground mb-3">وصف الوظيفة</h2>
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{job.description}</p>
+                  <div 
+                    className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.description }}
+                  />
                 </section>
 
-                {/* AdSense 5 - Mid Content */}
-                <AdSense size="rectangle" className="mx-auto" placement="home_mid_content_1" />
+                {/* AdSense 2 - Mid Content */}
+                <div className="my-8 md:my-10 overflow-hidden">
+                  <AdSense size="rectangle" placement="job_details_middle" />
+                </div>
 
                 {job.requirements && job.requirements.length > 0 && (
                   <section>
@@ -189,33 +183,13 @@ const JobDetails = () => {
                 </a>
               </div>
             )}
-
-            {/* AdSense 6 - After Article */}
-            <AdSense size="leaderboard" className="mt-8" placement="home_after_featured" />
-
-            {/* AdSense 7 - Large Rectangle */}
-            <AdSense size="large-rectangle" className="mt-8 mx-auto" placement="home_large_rect" />
-
-            {relatedJobs.length > 0 && (
-              <section className="mt-12">
-                <h2 className="section-title">وظائف مشابهة</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mt-4">
-                  {relatedJobs.map((relatedJob) => (
-                    <JobCard key={relatedJob.id} job={relatedJob} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* AdSense 8 - After Related */}
-            <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
           </div>
         </div>
       </div>
 
-      {/* AdSense 12 - Before Footer */}
-      <div className="py-4">
-        <AdSense size="leaderboard" placement="footer_top" />
+      {/* AdSense 3 - Before Footer */}
+      <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <AdSense size="leaderboard" placement="job_details_bottom" />
       </div>
     </Layout>
   );

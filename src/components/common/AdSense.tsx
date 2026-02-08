@@ -44,19 +44,8 @@ const AdSense = ({ size = 'rectangle', placement, className = '' }: AdSenseProps
 
   // If no ad unit configured
   if (!adUnit?.slot_id) {
-    // If "Hide Placeholders" is enabled (Auto Ads mode), show nothing
-    if (settings?.hide_placeholders) {
-      return null;
-    }
-
-    // Otherwise show placeholder
-    return (
-      <div
-        className={`adsense-placeholder ${sizes[size]} mx-auto bg-muted/30 border border-dashed border-border rounded-lg flex items-center justify-center ${className}`}
-      >
-        <span className="text-muted-foreground text-sm">مساحة إعلانية</span>
-      </div>
-    );
+    // Don't show anything - make it invisible
+    return null;
   }
 
   return (

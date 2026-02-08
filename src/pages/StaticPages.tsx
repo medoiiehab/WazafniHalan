@@ -141,61 +141,16 @@ const StaticPages = () => {
         <link rel="canonical" href={`https://wazfni-now.com${path}`} />
       </Helmet>
 
-      {/* AdSense 1 - Top Leaderboard */}
-      <div className="py-4 bg-muted">
-        <AdSense size="leaderboard" placement="home_top" />
-      </div>
-
-      {/* AdSense 2 - Banner */}
-      <div className="py-4">
-        <AdSense size="banner" placement="home_banner_1" />
-      </div>
-
+     
       <div className="container-custom py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 max-w-3xl">
-            {/* AdSense 3 - Before Title */}
-            <AdSense size="inline" className="mb-6" placement="home_mid_content_1" />
+        <div className="max-w-3xl">
+          <h1 className="text-3xl font-bold text-foreground mb-8">{page.title}</h1>
 
-            <h1 className="text-3xl font-bold text-foreground mb-8">{page.title}</h1>
-
-            {/* AdSense 4 - After Title */}
-            <AdSense size="rectangle" className="mb-6 mx-auto" placement="home_after_featured" />
-
-            <div className="bg-card rounded-xl p-6 md:p-8 border border-border">
-              {page.content}
-            </div>
-
-            {/* AdSense 5 - After Content */}
-            <AdSense size="leaderboard" className="mt-8" placement="home_after_latest" />
-
-            {/* AdSense 6 - Large Rectangle */}
-            <AdSense size="large-rectangle" className="mt-8 mx-auto" placement="home_large_rect" />
-
-            {/* AdSense 7 - Inline */}
-            <AdSense size="inline" className="mt-8" placement="home_bottom_inline" />
-          </div>
-
-          {/* Sidebar */}
-          <div className="hidden lg:block lg:w-[320px] space-y-6">
-            {/* AdSense 8 - Sidebar Top */}
-            <AdSense size="rectangle" placement="sidebar_top" />
-            {/* AdSense 9 - Sidebar Middle */}
-            <AdSense size="rectangle" placement="sidebar_middle" />
-            {/* AdSense 10 - Sidebar Bottom */}
-            <AdSense size="large-rectangle" placement="sidebar_bottom" />
+        
+          <div className="bg-card rounded-xl p-6 md:p-8 border border-border">
+            {page.content}
           </div>
         </div>
-      </div>
-
-      {/* AdSense 11 - Before Footer */}
-      <div className="py-4">
-        <AdSense size="leaderboard" placement="footer_top" />
-      </div>
-
-      {/* AdSense 12 - Extra Banner */}
-      <div className="py-4">
-        <AdSense size="banner" placement="footer_top" />
       </div>
     </Layout>
   );

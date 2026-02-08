@@ -1828,37 +1828,33 @@ const Admin = () => {
                 onChange={(e) => setAdUnitForm({ ...adUnitForm, placement: e.target.value })}
                 className="input-field"
               >
-                <optgroup label="الصفحة الرئيسية">
-                  <option value="home_top">home_top - في الأعلى تحت الهيدر</option>
-                  <option value="home_banner_1">home_banner_1 - بنر عريض في الجزء العلوي</option>
-                  <option value="home_before_featured">home_before_featured - قبل قسم الوظائف المميزة</option>
-                  <option value="home_after_featured">home_after_featured - بعد الوظائف المميزة</option>
-                  <option value="home_mid_content_1">home_mid_content_1 - في وسط المحتوى</option>
-                  <option value="home_after_latest">home_after_latest - بعد أحدث الوظائف</option>
-                  <option value="home_large_rect">home_large_rect - مستطيل كبير في الأسفل</option>
-                  <option value="home_bottom_inline">home_bottom_inline - قبل الفوتر مباشرة</option>
+                <optgroup label="الصفحة الرئيسية (Home)">
+                  <option value="home_top">home_top - لوحة إعلانية بعد الهيرو</option>
+                  <option value="home_middle">home_middle - مستطيل في وسط المحتوى</option>
+                  <option value="footer_top">footer_top - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
-                <optgroup label="الشريط الجانبي">
-                  <option value="sidebar_top">sidebar_top - أول عنصر في الشريط الجانبي</option>
-                  <option value="sidebar_middle">sidebar_middle - في وسط الشريط الجانبي</option>
-                  <option value="sidebar_bottom">sidebar_bottom - في آخر الشريط الجانبي</option>
+                <optgroup label="جميع الوظائف (All Jobs)">
+                  <option value="all_jobs_top">all_jobs_top - لوحة إعلانية بعد الهيرو</option>
+                  <option value="all_jobs_middle">all_jobs_middle - مستطيل في وسط المحتوى</option>
+                  <option value="all_jobs_bottom">all_jobs_bottom - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
-                <optgroup label="تفاصيل الوظيفة">
-                  <option value="job_details_top">job_details_top - أعلى صفحة الوظيفة</option>
-                  <option value="job_details_banner_1">job_details_banner_1 - بنر داخل التفاصيل</option>
-                  <option value="job_details_sidebar_top">job_details_sidebar_top - شريط جانبي الوظائف</option>
+                <optgroup label="تفاصيل الوظيفة (Job Details)">
+                  <option value="job_details_top">job_details_top - لوحة إعلانية في الأعلى</option>
+                  <option value="job_details_middle">job_details_middle - مستطيل في وسط المحتوى</option>
+                  <option value="job_details_bottom">job_details_bottom - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
-                <optgroup label="المدونة">
-                  <option value="blog_top">blog_top - أعلى صفحة قائمة المقالات</option>
-                  <option value="blog_banner_1">blog_banner_1 - بنر في صفحة المقالات</option>
-                  <option value="blog_post_top">blog_post_top - أعلى صفحة المقال الفردي</option>
-                  <option value="blog_post_in_article_1">blog_post_in_article_1 - داخل نص المقال</option>
+                <optgroup label="المدونة (Blog)">
+                  <option value="blog_top">blog_top - لوحة إعلانية بعد الهيرو</option>
+                  <option value="blog_middle">blog_middle - مستطيل في وسط المحتوى</option>
+                  <option value="blog_bottom">blog_bottom - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
-                <optgroup label="التذييل">
-                  <option value="footer_top">footer_top - شريط عريض فوق الفوتر</option>
+                <optgroup label="صفحة المقال (Blog Post)">
+                  <option value="blog_post_top">blog_post_top - لوحة إعلانية في الأعلى</option>
+                  <option value="blog_post_middle">blog_post_middle - مستطيل في وسط المحتوى</option>
+                  <option value="blog_post_bottom">blog_post_bottom - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
               </select>
-              <p className="text-xs text-muted-foreground mt-1">اختر المكان المناسب من القائمة</p>
+              <p className="text-xs text-muted-foreground mt-1">اختر المكان المناسب من القائمة (3 إعلانات فقط لكل صفحة وفقاً لسياسة Google AdSense)</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
