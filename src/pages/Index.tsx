@@ -107,7 +107,7 @@ const Index = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow">
-            طريقك نحو <span className="text-blue-200">الوظيفة المثالية</span> <br className="hidden md:block" /> في لمح البصر
+            طريقك نحو <span className="">الوظيفة المثالية</span> <br className="hidden md:block" /> في لمح البصر
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto px-2 animate-slide-up animate-delay-100 font-medium leading-relaxed">

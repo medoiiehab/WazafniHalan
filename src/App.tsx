@@ -16,6 +16,7 @@ import StaticPages from "./pages/StaticPages";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdSenseLoader from "./components/common/AdSenseLoader";
+import ContentEditor from "./pages/ContentEditor";
 
 
 
@@ -42,6 +43,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireAdmin>
                   <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/editor/:type/:id?"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <ContentEditor />
                 </ProtectedRoute>
               }
             />

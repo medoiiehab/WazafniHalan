@@ -10,7 +10,7 @@ export const useBlogPosts = () => {
         .from('blog_posts')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data as BlogPost[];
     },
@@ -26,7 +26,7 @@ export const usePublishedBlogPosts = () => {
         .select('*')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data as BlogPost[];
     },
@@ -42,7 +42,7 @@ export const useBlogPost = (slug: string) => {
         .select('*')
         .eq('slug', slug)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data as BlogPost | null;
     },
@@ -50,9 +50,26 @@ export const useBlogPost = (slug: string) => {
   });
 };
 
+export const useBlogPostById = (id: string) => {
+  return useQuery({
+    queryKey: ['blog_posts', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as BlogPost | null;
+    },
+    enabled: !!id,
+  });
+};
+
 export const useCreateBlogPost = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
@@ -64,7 +81,7 @@ export const useCreateBlogPost = () => {
         })
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -76,7 +93,7 @@ export const useCreateBlogPost = () => {
 
 export const useUpdateBlogPost = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...post }: Partial<BlogPost> & { id: string }) => {
       const { data, error } = await supabase
@@ -85,7 +102,7 @@ export const useUpdateBlogPost = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -97,14 +114,14 @@ export const useUpdateBlogPost = () => {
 
 export const useDeleteBlogPost = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('blog_posts')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {
