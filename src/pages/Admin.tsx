@@ -15,14 +15,9 @@ import {
   Loader2,
   User,
   LogOut,
-  Eye,
-  MousePointer,
-  TrendingUp,
-  BarChart3,
   Users,
   UserPlus,
   UserMinus,
-  Globe,
   Megaphone,
   Menu,
 } from "lucide-react";
@@ -44,6 +39,7 @@ import {
   useDeleteAdUnit,
   AdUnit
 } from "@/hooks/useAdSenseSettings";
+import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
 
 type TabType = "dashboard" | "jobs" | "blog" | "users" | "adsense" | "settings";
 
@@ -70,6 +66,8 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+  const [blogStatusFilter, setBlogStatusFilter] = useState<"all" | "published" | "draft">("all");
   // Modals state removed as we use navigation now
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
@@ -184,11 +182,27 @@ const Admin = () => {
     { id: "settings" as TabType, label: "الإعدادات", icon: Settings },
   ];
 
+  const filteredBlogPosts = blogPosts.filter(
+    (post) => {
+      const matchesSearch = post.title.includes(searchTerm) || post.slug.includes(searchTerm);
+
+      if (blogStatusFilter === "all") return matchesSearch;
+      if (blogStatusFilter === "published") return matchesSearch && post.is_published !== false;
+      if (blogStatusFilter === "draft") return matchesSearch && post.is_published === false;
+      return matchesSearch;
+    }
+  );
   const filteredJobs = jobs.filter(
-    (job) =>
-      job.title.includes(searchTerm) ||
-      (job.company && job.company.includes(searchTerm)) ||
-      job.country.includes(searchTerm),
+    (job) => {
+      const matchesSearch = job.title.includes(searchTerm) ||
+        (job.company && job.company.includes(searchTerm)) ||
+        job.country.includes(searchTerm);
+
+      if (statusFilter === "all") return matchesSearch;
+      if (statusFilter === "published") return matchesSearch && job.is_published !== false; // Default to true if undefined
+      if (statusFilter === "draft") return matchesSearch && job.is_published === false;
+      return matchesSearch;
+    }
   );
 
   const openJobModal = (job?: Job) => {
@@ -504,271 +518,17 @@ const Admin = () => {
         <main className="flex-1 p-4 lg:p-8 overflow-x-hidden">
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
-            <div>
-              <h1 className="text-2xl font-bold text-foreground mb-6">لوحة التحكم</h1>
-
-              {/* Main Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-4">
-                    <Briefcase className="w-8 h-8 text-primary" />
-                    <span className="text-3xl font-bold text-foreground">{jobs.length}</span>
-                  </div>
-                  <p className="text-muted-foreground">إجمالي الوظائف</p>
-                </div>
-
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-4">
-                    <FileText className="w-8 h-8 text-primary" />
-                    <span className="text-3xl font-bold text-foreground">{blogPosts.length}</span>
-                  </div>
-                  <p className="text-muted-foreground">مقالات المدونة</p>
-                </div>
-
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-4">
-                    <Eye className="w-8 h-8 text-blue-500" />
-                    <span className="text-3xl font-bold text-foreground">
-                      {isLoadingAnalytics ? "-" : analyticsSummary?.total_views || 0}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground">إجمالي المشاهدات</p>
-                </div>
-
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center justify-between mb-4">
-                    <MousePointer className="w-8 h-8 text-green-500" />
-                    <span className="text-3xl font-bold text-foreground">
-                      {isLoadingAnalytics ? "-" : analyticsSummary?.total_clicks || 0}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground">نقرات التقديم</p>
-                </div>
-              </div>
-
-              {/* Analytics Summary */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-6 h-6 text-primary" />
-                    <h3 className="text-lg font-bold text-foreground">اليوم</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">
-                        {isLoadingAnalytics ? "-" : analyticsSummary?.views_today || 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">مشاهدة</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">
-                        {isLoadingAnalytics ? "-" : analyticsSummary?.clicks_today || 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">نقرة</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center gap-3 mb-4">
-                    <BarChart3 className="w-6 h-6 text-primary" />
-                    <h3 className="text-lg font-bold text-foreground">هذا الأسبوع</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">
-                        {isLoadingAnalytics ? "-" : analyticsSummary?.views_this_week || 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">مشاهدة</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">
-                        {isLoadingAnalytics ? "-" : analyticsSummary?.clicks_this_week || 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">نقرة</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-6 h-6 text-primary" />
-                    <h3 className="text-lg font-bold text-foreground">هذا الشهر</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">
-                        {isLoadingAnalytics ? "-" : analyticsSummary?.views_this_month || 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">مشاهدة</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">
-                        {isLoadingAnalytics ? "-" : analyticsSummary?.clicks_this_month || 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">نقرة</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Daily Chart */}
-              <div className="bg-card rounded-xl p-6 border border-border mb-8">
-                <h2 className="text-lg font-bold text-foreground mb-4">إحصائيات آخر 7 أيام</h2>
-                <div className="space-y-3">
-                  {dailyAnalytics.map((day) => (
-                    <div key={day.date} className="flex items-center gap-4">
-                      <span className="text-sm text-muted-foreground w-24">
-                        {new Date(day.date).toLocaleDateString("ar-SA", { weekday: "short", day: "numeric" })}
-                      </span>
-                      <div className="flex-1 flex items-center gap-2">
-                        <div className="flex-1 bg-muted rounded-full h-4 overflow-hidden">
-                          <div
-                            className="bg-blue-500 h-full rounded-full transition-all"
-                            style={{
-                              width: `${Math.min((day.views / Math.max(...dailyAnalytics.map((d) => d.views), 1)) * 100, 100)}%`,
-                            }}
-                          />
-                        </div>
-                        <span className="text-sm text-muted-foreground w-12 text-left">{day.views}</span>
-                      </div>
-                      <div className="flex-1 flex items-center gap-2">
-                        <div className="flex-1 bg-muted rounded-full h-4 overflow-hidden">
-                          <div
-                            className="bg-green-500 h-full rounded-full transition-all"
-                            style={{
-                              width: `${Math.min((day.clicks / Math.max(...dailyAnalytics.map((d) => d.clicks), 1)) * 100, 100)}%`,
-                            }}
-                          />
-                        </div>
-                        <span className="text-sm text-muted-foreground w-12 text-left">{day.clicks}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500" />
-                    <span className="text-sm text-muted-foreground">المشاهدات</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <span className="text-sm text-muted-foreground">نقرات التقديم</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Country Analytics */}
-              <div className="bg-card rounded-xl p-6 border border-border mb-8">
-                <h2 className="text-lg font-bold text-foreground mb-4">إحصائيات حسب الدولة</h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-muted">
-                      <tr>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">الدولة</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">عدد الوظائف</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">المشاهدات</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">نقرات التقديم</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">معدل التحويل</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {countryAnalytics.map((country) => (
-                        <tr key={country.country_slug} className="border-b border-border hover:bg-muted/50">
-                          <td className="py-3 px-4 font-medium text-foreground">{country.country}</td>
-                          <td className="py-3 px-4 text-muted-foreground">{country.total_jobs}</td>
-                          <td className="py-3 px-4">
-                            <span className="text-blue-500 flex items-center gap-1">
-                              <Eye className="w-4 h-4" />
-                              {country.views}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-green-500 flex items-center gap-1">
-                              <MousePointer className="w-4 h-4" />
-                              {country.clicks}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-primary font-medium">
-                              {country.views > 0 ? ((country.clicks / country.views) * 100).toFixed(1) : 0}%
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                      {countryAnalytics.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="text-center text-muted-foreground py-8">
-                            لا توجد بيانات بعد
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Top Jobs by Views */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <h2 className="text-lg font-bold text-foreground mb-4">أكثر الوظائف مشاهدة</h2>
-                  <div className="space-y-3">
-                    {jobsAnalytics.slice(0, 5).map((job, index) => (
-                      <div
-                        key={job.job_id}
-                        className="flex items-center justify-between py-3 border-b border-border last:border-0"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-sm flex items-center justify-center font-medium">
-                            {index + 1}
-                          </span>
-                          <p className="font-medium text-foreground line-clamp-1">{job.job_title}</p>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm">
-                          <span className="text-blue-500 flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            {job.views}
-                          </span>
-                          <span className="text-green-500 flex items-center gap-1">
-                            <MousePointer className="w-4 h-4" />
-                            {job.clicks}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                    {jobsAnalytics.length === 0 && (
-                      <p className="text-center text-muted-foreground py-4">لا توجد بيانات بعد</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-card rounded-xl p-6 border border-border">
-                  <h2 className="text-lg font-bold text-foreground mb-4">آخر الوظائف المضافة</h2>
-                  {isLoadingJobs ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {jobs.slice(0, 5).map((job) => (
-                        <div
-                          key={job.id}
-                          className="flex items-center justify-between py-3 border-b border-border last:border-0"
-                        >
-                          <div>
-                            <p className="font-medium text-foreground">{job.title}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {job.company} - {job.country}
-                            </p>
-                          </div>
-                          <span className="text-sm text-muted-foreground">{formatDate(job.created_at)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <AnalyticsDashboard
+              jobs={jobs}
+              blogPosts={blogPosts}
+              analyticsSummary={analyticsSummary}
+              isLoadingAnalytics={isLoadingAnalytics}
+              isLoadingJobs={isLoadingJobs}
+              dailyAnalytics={dailyAnalytics}
+              countryAnalytics={countryAnalytics}
+              jobsAnalytics={jobsAnalytics}
+              formatDate={formatDate}
+            />
           )}
 
           {/* Jobs Tab */}
@@ -783,8 +543,8 @@ const Admin = () => {
               </div>
 
               <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="p-4 border-b border-border">
-                  <div className="relative">
+                <div className="p-4 border-b border-border flex flex-col md:flex-row gap-4 items-center justify-between">
+                  <div className="relative flex-1 w-full">
                     <input
                       type="text"
                       placeholder="البحث في الوظائف..."
@@ -793,6 +553,17 @@ const Admin = () => {
                       className="input-field pr-10"
                     />
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value as any)}
+                      className="input-field w-auto min-w-[150px]"
+                    >
+                      <option value="all">الكل</option>
+                      <option value="published">منشور</option>
+                      <option value="draft">مسودة</option>
+                    </select>
                   </div>
                 </div>
 
@@ -822,6 +593,11 @@ const Admin = () => {
                               {job.is_featured && (
                                 <span className="mr-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
                                   مميز
+                                </span>
+                              )}
+                              {!job.is_published && (
+                                <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">
+                                  مسودة
                                 </span>
                               )}
                             </td>

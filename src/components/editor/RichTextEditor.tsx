@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -7,26 +7,27 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  toolbarContainerId?: string; // If provided, toolbar renders into this external element
 }
 
 // Auto-detect direction based on content --Updated to remove HTML tags and entities
 const getDirection = (text: string): "rtl" | "ltr" => {
   if (!text) return "ltr";
-  
+
   // Remove ALL HTML tags and entities
   const plainText = text
     .replace(/<[^>]+>/g, '')  // Remove HTML tags
     .replace(/&[a-z]+;/g, '') // Remove HTML entities (&nbsp;, &lt;, etc.)
     .trim();
-  
+
   if (plainText.length === 0) return "ltr";
-  
+
   const arabicPattern = /[\u0600-\u06FF]/;
   // Check the first non-whitespace characters
   return arabicPattern.test(plainText.slice(0, 20)) ? "rtl" : "ltr";
 };
 
-const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTextEditorProps) => {
+const RichTextEditor = ({ value, onChange, placeholder, className = "", toolbarContainerId }: RichTextEditorProps) => {
   const quillRef = useRef<ReactQuill>(null);
   const [direction, setDirection] = useState<"rtl" | "ltr">("ltr");
   const [isMounted, setIsMounted] = useState(false);
@@ -61,34 +62,39 @@ const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTe
     [onChange, direction]
   );
 
-  // Quill modules configuration
-  const modules = {
-    toolbar: [
-      // Text formatting
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      
-      // Lists
-      ["blockquote", "code-block"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      
-      // Alignment
-      [{ align: [] }],
-      
-      // Link and image
-      ["link"],
-      
-      // Color and background
-      [{ color: [] }, { background: [] }],
-      
-      // Undo/Redo
-      ["undo", "redo"],
-      
-      // Clear formatting
-      ["clean"],
-    ],
-  };
+  // Quill toolbar options
+  const toolbarOptions = [
+    // Text formatting
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline", "strike"],
+
+    // Lists
+    ["blockquote", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+
+    // Alignment
+    [{ align: [] }],
+
+    // Link and image
+    ["link"],
+
+    // Color and background
+    [{ color: [] }, { background: [] }],
+
+    // Undo/Redo
+    ["undo", "redo"],
+
+    // Clear formatting
+    ["clean"],
+  ];
+
+  // Quill modules configuration — use external toolbar container if provided
+  const modules = useMemo(() => ({
+    toolbar: toolbarContainerId
+      ? { container: `#${toolbarContainerId}` }
+      : toolbarOptions,
+  }), [toolbarContainerId]);
 
   // Quill formats configuration
   const formats = [
@@ -109,7 +115,7 @@ const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTe
 
   if (!isMounted) {
     return (
-      <div className={`flex items-center justify-center rounded-lg border border-border w-full h-full ${className}`}>
+      <div className={`flex items-center justify-center rounded-lg border border-border w-full min-h-[400px] ${className}`}>
         <div className="text-gray-500">Loading...</div>
       </div>
     );
@@ -118,8 +124,7 @@ const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTe
   return (
     <div
       dir={direction}
-      className={`flex flex-col w-full h-full rounded-lg border border-border overflow-hidden bg-background quill-editor-wrapper ${className}`}
-      style={{ display: "flex", flexDirection: "column" }}
+      className={`flex flex-col w-full rounded-lg border border-border overflow-visible bg-background quill-editor-wrapper ${className}`}
     >
       <ReactQuill
         ref={quillRef}
@@ -129,8 +134,20 @@ const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTe
         formats={formats}
         theme="snow"
         placeholder={placeholder || "Article content..."}
-        style={{ display: "flex", flexDirection: "column", height: "100%" }}
       />
+      <style>{`
+        .ql-toolbar {
+          direction: ltr !important;
+          text-align: left !important;
+        }
+        .ql-picker-label {
+          text-align: left !important;
+        }
+        .ql-formats {
+          margin-right: 15px !important;
+          margin-left: 0 !important;
+        }
+      `}</style>
     </div>
   );
 };

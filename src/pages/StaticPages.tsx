@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Layout from '@/components/layout/Layout';
 import AdSense from '@/components/common/AdSense';
+import PageHeader from '@/components/layout/PageHeader';
 
 const StaticPages = () => {
   const location = useLocation();
@@ -142,9 +143,12 @@ const StaticPages = () => {
       </Helmet>
 
 
+      <PageHeader
+        title={page.title}
+      />
+
       <div className="container-custom py-12">
-        <div className="max-w-3xl">
-          <h1 className="text-3xl font-bold text-foreground mb-8">{page.title}</h1>
+        <div className="max-w-4xl mx-auto">
 
 
           <div className="bg-card rounded-xl p-6 md:p-8 border border-border">

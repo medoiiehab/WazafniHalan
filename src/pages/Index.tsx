@@ -151,7 +151,7 @@ const Index = () => {
           <div className="space-y-1">
             <div className="flex items-center justify-center gap-2 text-primary">
               <Briefcase className="w-5 h-5 md:w-6 md:h-6" />
-              <span className="text-xl md:text-2xl font-bold">١,٠٠٠+</span>
+              <span className="text-xl md:text-2xl font-bold">{allJobs.length}+</span>
             </div>
             <p className="text-sm text-muted-foreground font-medium">وظيفة شاغرة</p>
           </div>

@@ -52,6 +52,8 @@ const EmployeeDashboard = () => {
     is_featured: false,
     image_url: "",
     editor: "",
+    is_published: true,
+    focus_keyword: "",
   });
 
   // Blog form state
@@ -66,7 +68,11 @@ const EmployeeDashboard = () => {
     is_published: true,
     meta_title: "",
     meta_description: "",
+    focus_keyword: "",
   });
+
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+  const [blogStatusFilter, setBlogStatusFilter] = useState<"all" | "published" | "draft">("all");
 
   const tabs = [
     { id: "jobs" as TabType, label: "الوظائف", icon: Briefcase },
@@ -74,10 +80,27 @@ const EmployeeDashboard = () => {
   ];
 
   const filteredJobs = jobs.filter(
-    (job) =>
-      job.title.includes(searchTerm) ||
-      (job.company && job.company.includes(searchTerm)) ||
-      job.country.includes(searchTerm),
+    (job) => {
+      const matchesSearch = job.title.includes(searchTerm) ||
+        (job.company && job.company.includes(searchTerm)) ||
+        job.country.includes(searchTerm);
+
+      if (statusFilter === "all") return matchesSearch;
+      if (statusFilter === "published") return matchesSearch && job.is_published !== false;
+      if (statusFilter === "draft") return matchesSearch && job.is_published === false;
+      return matchesSearch;
+    }
+  );
+
+  const filteredBlogPosts = blogPosts.filter(
+    (post) => {
+      const matchesSearch = post.title.includes(searchTerm) || post.slug.includes(searchTerm);
+
+      if (blogStatusFilter === "all") return matchesSearch;
+      if (blogStatusFilter === "published") return matchesSearch && post.is_published !== false;
+      if (blogStatusFilter === "draft") return matchesSearch && post.is_published === false;
+      return matchesSearch;
+    }
   );
 
   const openJobModal = (job?: Job) => {
@@ -100,6 +123,8 @@ const EmployeeDashboard = () => {
         is_featured: job.is_featured || false,
         image_url: job.image_url || "",
         editor: job.editor || "",
+        is_published: job.is_published ?? true,
+        focus_keyword: job.tags?.[0] || "",
       });
     } else {
       setEditingJob(null);
@@ -120,6 +145,8 @@ const EmployeeDashboard = () => {
         is_featured: false,
         image_url: "",
         editor: user?.id || "",
+        is_published: true,
+        focus_keyword: "",
       });
     }
     setIsJobModalOpen(true);
@@ -139,6 +166,7 @@ const EmployeeDashboard = () => {
         is_published: blog.is_published ?? true,
         meta_title: blog.meta_title || "",
         meta_description: blog.meta_description || "",
+        focus_keyword: blog.tags?.[0] || "",
       });
     } else {
       setEditingBlog(null);
@@ -153,6 +181,7 @@ const EmployeeDashboard = () => {
         is_published: true,
         meta_title: "",
         meta_description: "",
+        focus_keyword: "",
       });
     }
     setIsBlogModalOpen(true);
@@ -171,7 +200,7 @@ const EmployeeDashboard = () => {
 
     try {
       const slug = jobForm.slug.trim() || jobForm.title.toLowerCase().replace(/\s+/g, "-");
-      
+
       const jobData = {
         title: jobForm.title,
         slug: slug,
@@ -194,6 +223,7 @@ const EmployeeDashboard = () => {
         is_featured: jobForm.is_featured,
         image_url: jobForm.image_url || null,
         editor: jobForm.editor || user?.id || null,
+        is_published: jobForm.is_published,
       };
 
       if (editingJob) {
@@ -206,10 +236,10 @@ const EmployeeDashboard = () => {
       setIsJobModalOpen(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-      toast({ 
-        title: "حدث خطأ", 
-        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى", 
-        variant: "destructive" 
+      toast({
+        title: "حدث خطأ",
+        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى",
+        variant: "destructive"
       });
       console.error("Error saving job:", error);
     }
@@ -222,10 +252,10 @@ const EmployeeDashboard = () => {
         toast({ title: "تم حذف الوظيفة بنجاح" });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-        toast({ 
-          title: "فشل الحذف", 
-          description: errorMessage || "يرجى المحاولة مرة أخرى", 
-          variant: "destructive" 
+        toast({
+          title: "فشل الحذف",
+          description: errorMessage || "يرجى المحاولة مرة أخرى",
+          variant: "destructive"
         });
         console.error("Error deleting job:", error);
       }
@@ -272,10 +302,10 @@ const EmployeeDashboard = () => {
       setIsBlogModalOpen(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-      toast({ 
-        title: "حدث خطأ", 
-        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى", 
-        variant: "destructive" 
+      toast({
+        title: "حدث خطأ",
+        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى",
+        variant: "destructive"
       });
       console.error("Error saving blog:", error);
     }
@@ -288,10 +318,10 @@ const EmployeeDashboard = () => {
         toast({ title: "تم حذف المقال بنجاح" });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-        toast({ 
-          title: "فشل الحذف", 
-          description: errorMessage || "يرجى المحاولة مرة أخرى", 
-          variant: "destructive" 
+        toast({
+          title: "فشل الحذف",
+          description: errorMessage || "يرجى المحاولة مرة أخرى",
+          variant: "destructive"
         });
         console.error("Error deleting blog:", error);
       }
@@ -408,8 +438,8 @@ const EmployeeDashboard = () => {
               </div>
 
               <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="p-4 border-b border-border">
-                  <div className="relative">
+                <div className="p-4 border-b border-border flex flex-col md:flex-row gap-4 items-center justify-between">
+                  <div className="relative flex-1 w-full">
                     <input
                       type="text"
                       placeholder="البحث في الوظائف..."
@@ -418,6 +448,17 @@ const EmployeeDashboard = () => {
                       className="input-field pr-10"
                     />
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value as any)}
+                      className="input-field w-auto min-w-[150px]"
+                    >
+                      <option value="all">الكل</option>
+                      <option value="published">منشور</option>
+                      <option value="draft">مسودة</option>
+                    </select>
                   </div>
                 </div>
 
@@ -446,6 +487,11 @@ const EmployeeDashboard = () => {
                               {job.is_featured && (
                                 <span className="mr-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
                                   مميز
+                                </span>
+                              )}
+                              {!job.is_published && (
+                                <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">
+                                  مسودة
                                 </span>
                               )}
                             </td>
@@ -494,6 +540,17 @@ const EmployeeDashboard = () => {
                   <Plus className="w-5 h-5" />
                   مقال جديد
                 </button>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={blogStatusFilter}
+                    onChange={(e) => setBlogStatusFilter(e.target.value as any)}
+                    className="input-field w-auto min-w-[150px]"
+                  >
+                    <option value="all">الكل</option>
+                    <option value="published">منشور</option>
+                    <option value="draft">مسودة</option>
+                  </select>
+                </div>
               </div>
 
               {isLoadingBlogs ? (
@@ -502,7 +559,7 @@ const EmployeeDashboard = () => {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {blogPosts.map((post) => (
+                  {filteredBlogPosts.map((post) => (
                     <div
                       key={post.id}
                       className="bg-card rounded-xl p-5 border border-border flex items-center justify-between"
@@ -658,7 +715,7 @@ const EmployeeDashboard = () => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">الوصف الكامل *</label>
-              <div className="h-[500px] border border-border rounded-lg overflow-hidden">
+              <div className="min-h-[500px] overflow-visible">
                 <RichTextEditor
                   value={jobForm.description}
                   onChange={(value) => setJobForm({ ...jobForm, description: value })}
@@ -719,11 +776,12 @@ const EmployeeDashboard = () => {
                 title={jobForm.title}
                 description={jobForm.short_description}
                 slug={jobForm.title.toLowerCase().replace(/\s+/g, "-")}
-                focus_keyword={jobForm.tags}
+                focus_keyword={jobForm.focus_keyword}
+                onChange={(seo) => setJobForm({ ...jobForm, focus_keyword: seo.focus_keyword })}
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mt-4">
               <input
                 type="checkbox"
                 id="is_featured"
@@ -733,6 +791,19 @@ const EmployeeDashboard = () => {
               />
               <label htmlFor="is_featured" className="text-sm font-medium text-foreground">
                 وظيفة مميزة
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                type="checkbox"
+                id="is_published_job"
+                checked={jobForm.is_published}
+                onChange={(e) => setJobForm({ ...jobForm, is_published: e.target.checked })}
+                className="w-4 h-4 rounded border-border"
+              />
+              <label htmlFor="is_published_job" className="text-sm font-medium text-foreground">
+                نشر الوظيفة
               </label>
             </div>
           </div>
@@ -827,7 +898,7 @@ const EmployeeDashboard = () => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">المحتوى *</label>
-              <div className="h-[500px] border border-border rounded-lg overflow-hidden">
+              <div className="min-h-[500px] overflow-visible">
                 <RichTextEditor
                   value={blogForm.content}
                   onChange={(value) => setBlogForm({ ...blogForm, content: value })}
@@ -854,7 +925,8 @@ const EmployeeDashboard = () => {
                 title={blogForm.meta_title || blogForm.title}
                 description={blogForm.meta_description}
                 slug={blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
-                focus_keyword={blogForm.tags}
+                focus_keyword={blogForm.focus_keyword}
+                onChange={(seo) => setBlogForm({ ...blogForm, focus_keyword: seo.focus_keyword })}
               />
             </div>
 
@@ -889,7 +961,7 @@ const EmployeeDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   );
 };
 

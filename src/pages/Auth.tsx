@@ -18,7 +18,7 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
-  
+
   const { user, isLoading, signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -31,12 +31,12 @@ const Auth = () => {
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string; confirmPassword?: string } = {};
-    
+
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
       newErrors.email = emailResult.error.errors[0].message;
     }
-    
+
     const passwordResult = passwordSchema.safeParse(password);
     if (!passwordResult.success) {
       newErrors.password = passwordResult.error.errors[0].message;
@@ -45,18 +45,18 @@ const Auth = () => {
     if (isSignUp && password !== confirmPassword) {
       newErrors.confirmPassword = 'كلمات المرور غير متطابقة';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       if (isSignUp) {
         const { error } = await signUp(email, password);
@@ -119,29 +119,35 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-muted" dir="rtl">
+    <div className="min-h-screen flex flex-col bg-mesh relative overflow-hidden" dir="rtl">
+      {/* Background Abstract Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-300/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
+
       <Helmet>
         <title>{isSignUp ? 'إنشاء حساب' : 'تسجيل الدخول'} | وظفني حالاً</title>
       </Helmet>
 
       {/* AdSense 1 - Top */}
-      <div className="py-4">
+      <div className="py-4 relative z-10">
         <AdSense size="leaderboard" />
       </div>
 
       {/* AdSense 2 - Banner */}
-      <div className="py-4">
+      <div className="py-4 relative z-10">
         <AdSense size="banner" />
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex-1 flex items-center justify-center p-4 relative z-10">
         <div className="w-full max-w-md">
           {/* AdSense 3 - Before Form */}
           <AdSense size="inline" className="mb-6" />
 
-          <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
+          <div className="bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center animate-bounce">
                 {isSignUp ? (
                   <UserPlus className="w-8 h-8 text-primary" />
                 ) : (
@@ -155,7 +161,7 @@ const Auth = () => {
                 {isSignUp ? 'أنشئ حسابك للوصول إلى الميزات الكاملة' : 'أدخل بياناتك للوصول إلى حسابك'}
               </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
@@ -175,7 +181,7 @@ const Auth = () => {
                   <p className="text-sm text-destructive mt-1">{errors.email}</p>
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   كلمة المرور
@@ -222,7 +228,7 @@ const Auth = () => {
                   )}
                 </div>
               )}
-              
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -251,7 +257,7 @@ const Auth = () => {
 
           {/* AdSense 4 - After Form */}
           <AdSense size="rectangle" className="mt-6 mx-auto" />
-          
+
           <p className="text-center text-muted-foreground text-sm mt-4">
             <a href="/" className="hover:text-primary transition-colors">
               ← العودة للصفحة الرئيسية

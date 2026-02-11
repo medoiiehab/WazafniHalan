@@ -105,7 +105,12 @@
     @apply bg-background text-foreground font-cairo antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold;
   }
 }
@@ -194,14 +199,30 @@
 
   .bg-mesh {
     background-color: hsla(210, 85%, 45%, 1);
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(210, 85%, 55%, 1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(210, 70%, 45%, 1) 0, transparent 50%), 
+    background-image:
+      radial-gradient(at 0% 0%, hsla(210, 85%, 55%, 1) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(210, 70%, 45%, 1) 0, transparent 50%),
       radial-gradient(at 100% 0%, hsla(215, 80%, 40%, 1) 0, transparent 50%);
   }
 
   .floating {
     animation: floating 3s ease-in-out infinite;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
   }
 }
 
@@ -209,6 +230,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -219,6 +241,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -230,6 +253,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -237,7 +261,61 @@
 }
 
 @keyframes floating {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Quill Editor Sticky Toolbar (inline — used in modals) */
+.quill-editor-wrapper .ql-toolbar.ql-snow {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: hsl(var(--card));
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid hsl(var(--border));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.quill-editor-wrapper .ql-container.ql-snow {
+  border: none !important;
+}
+
+.quill-editor-wrapper .ql-editor {
+  min-height: 400px;
+}
+
+/* External toolbar container (ContentEditor page) */
+#editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#editor-toolbar .ql-formats {
+  margin-right: 12px;
+  display: inline-flex;
+  align-items: center;
+}
+
+#editor-toolbar button,
+#editor-toolbar .ql-picker {
+  cursor: pointer;
+}
+
+/* Hide the inline toolbar when external toolbar is in use */
+#editor-toolbar~div .quill-editor-wrapper .ql-toolbar.ql-snow {
+  display: none;
 }

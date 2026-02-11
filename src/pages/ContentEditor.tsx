@@ -56,9 +56,11 @@ const ContentEditor = () => {
     const [excerpt, setExcerpt] = useState(""); // Short Description for Job
     const [metaTitle, setMetaTitle] = useState("");
     const [metaDescription, setMetaDescription] = useState("");
+
     const [status, setStatus] = useState<"draft" | "published">("draft");
     const [imageUrl, setImageUrl] = useState("");
     const [tags, setTags] = useState("");
+    const [focusKeyword, setFocusKeyword] = useState("");
 
     // Job specific state
     const [company, setCompany] = useState("");
@@ -90,6 +92,7 @@ const ContentEditor = () => {
             setExclusiveTag(jobData.exclusive_tag || "none");
             setRequirements(jobData.requirements?.join("\n") || "");
             setTags(jobData.tags?.join(", ") || "");
+            setFocusKeyword(jobData.tags?.[0] || ""); // Use first tag as focus keyword
             setImageUrl(jobData.image_url || "");
             setIsFeatured(jobData.is_featured || false);
             // Jobs don't have is_published currently, assume published if exists? Or add status later.
@@ -103,6 +106,7 @@ const ContentEditor = () => {
             setStatus(blogData.is_published ? "published" : "draft");
             setAuthor(blogData.author || "فريق وظفني حالاً");
             setTags(blogData.tags?.join(", ") || "");
+            setFocusKeyword(blogData.tags?.[0] || ""); // Use first tag as focus keyword
             setImageUrl(blogData.image_url || "");
         }
     }, [jobData, blogData, isJob]);
@@ -158,6 +162,7 @@ const ContentEditor = () => {
                     image_url: imageUrl || null,
                     editor: user?.id || null,
                     is_featured: isFeatured,
+                    is_published: status === "published",
                 };
 
                 if (isEditMode && id) {
@@ -231,24 +236,69 @@ const ContentEditor = () => {
                         <Save className="w-4 h-4 ml-2" />
                         حفظ
                     </Button>
-                    {!isJob && (
-                        <Button
-                            variant={status === "published" ? "default" : "secondary"}
-                            onClick={() => {
-                                setStatus(prev => prev === "published" ? "draft" : "published");
-                                // Optionally save immediately
-                            }}
-                        >
-                            {status === "published" ? "منشور" : "مسودة"}
-                        </Button>
-                    )}
+                    <Button
+                        variant={status === "published" ? "default" : "secondary"}
+                        onClick={() => {
+                            setStatus(prev => prev === "published" ? "draft" : "published");
+                            // Optionally save immediately
+                        }}
+                    >
+                        {status === "published" ? "منشور" : "مسودة"}
+                    </Button>
                 </div>
+            </div>
+
+            {/* Sticky Editor Toolbar — sits right below the nav */}
+            <div
+                id="editor-toolbar"
+                className="sticky top-16 z-40 bg-card border-b border-border px-4 py-1"
+                style={{ direction: 'ltr', textAlign: 'left' }}
+            >
+                <span className="ql-formats">
+                    <select className="ql-header" defaultValue="">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value=""></option>
+                    </select>
+                </span>
+                <span className="ql-formats">
+                    <button className="ql-bold"></button>
+                    <button className="ql-italic"></button>
+                    <button className="ql-underline"></button>
+                    <button className="ql-strike"></button>
+                </span>
+                <span className="ql-formats">
+                    <button className="ql-blockquote"></button>
+                    <button className="ql-code-block"></button>
+                </span>
+                <span className="ql-formats">
+                    <button className="ql-list" value="ordered"></button>
+                    <button className="ql-list" value="bullet"></button>
+                </span>
+                <span className="ql-formats">
+                    <button className="ql-indent" value="-1"></button>
+                    <button className="ql-indent" value="+1"></button>
+                </span>
+                <span className="ql-formats">
+                    <select className="ql-align"></select>
+                </span>
+                <span className="ql-formats">
+                    <button className="ql-link"></button>
+                </span>
+                <span className="ql-formats">
+                    <select className="ql-color"></select>
+                    <select className="ql-background"></select>
+                </span>
+                <span className="ql-formats">
+                    <button className="ql-clean"></button>
+                </span>
             </div>
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Main Content */}
-                <div className="flex-1 overflow-y-auto p-8">
-                    <div className="max-w-4xl mx-auto space-y-6">
+                <div className="flex-1 overflow-y-auto">
+                    <div className="max-w-4xl mx-auto space-y-6 p-8">
                         <Input
                             placeholder="عنـــوان الموضــوع..."
                             className="text-3xl font-bold border-none px-0 shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/50 h-auto py-4"
@@ -256,12 +306,13 @@ const ContentEditor = () => {
                             onChange={e => setTitle(e.target.value)}
                         />
 
-                        <div className="min-h-[500px] border rounded-lg bg-card">
+                        <div className="min-h-[500px] overflow-visible">
                             <RichTextEditor
                                 value={content}
                                 onChange={setContent}
                                 className="min-h-[500px] border-none"
                                 placeholder="اكتب المحتوى هنا..."
+                                toolbarContainerId="editor-toolbar"
                             />
                         </div>
 
@@ -310,10 +361,11 @@ const ContentEditor = () => {
 
                         <SEOBar
                             title={metaTitle || title}
-                            description={metaDescription || excerpt}
+                            description={metaDescription || excerpt || (content ? content.substring(0, 160) : "")}
                             slug={slug}
+                            focus_keyword={focusKeyword}
                             onChange={(seo) => {
-                                // Update meta fields if needed, mostly used for preview
+                                setFocusKeyword(seo.focus_keyword);
                             }}
                         />
                     </div>

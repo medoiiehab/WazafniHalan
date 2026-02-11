@@ -8,6 +8,7 @@ import AdSense from '@/components/common/AdSense';
 import { useJob, useJobs } from '@/hooks/useJobs';
 import { useTrackJobEvent } from '@/hooks/useJobAnalytics';
 import { exclusiveTagLabels, Job } from '@/types/database';
+import PageHeader from '@/components/layout/PageHeader';
 
 // Placeholder work images
 const placeholderImages = [
@@ -98,45 +99,52 @@ const JobDetails = () => {
         </script>
       </Helmet>
 
-      {/* AdSense 1 - Top Leaderboard */}
-      <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <AdSense size="leaderboard" placement="job_details_top" />
-      </div>
+      <PageHeader
+        title={job.title}
+        backgroundImage={getJobImage(job)}
+        className="mb-[-60px] pb-32" // Negative margin to allow card overlap
+      >
+        <div className="flex flex-wrap items-center justify-center gap-4 text-blue-50 mt-4">
+          {job.company && <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm"><Building2 className="w-5 h-5" />{job.company}</span>}
+          <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm"><MapPin className="w-5 h-5" />{job.country}</span>
+          <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm"><Calendar className="w-5 h-5" />{formatDate(job.created_at)}</span>
+        </div>
 
-      <div className="container-custom py-8">
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
-          <ArrowRight className="w-4 h-4" />
-          <span className="text-foreground">{job.title}</span>
-        </nav>
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+          {job.job_type && <span className="px-4 py-1.5 rounded-full bg-blue-500/20 text-white border border-blue-400/30 text-sm font-medium">{job.job_type}</span>}
+          {job.exclusive_tag && job.exclusive_tag !== 'none' && (
+            <span className="px-4 py-1.5 rounded-full bg-yellow-500/20 text-yellow-200 border border-yellow-400/30 text-sm font-medium">{exclusiveTagLabels[job.exclusive_tag]}</span>
+          )}
+        </div>
+      </PageHeader>
 
+      <div className="container-custom relative z-20 pb-12">
         <div className="flex flex-col lg:flex-row gap-8 justify-center">
           <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
-            <article className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-              {/* Job Header Image */}
-              <div className="w-full h-64 overflow-hidden">
-                <img
-                  src={getJobImage(job)}
-                  alt={job.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* Breadcrumb relocated */}
+            <nav className="flex items-center gap-2 text-sm text-muted-foreground/80 mb-6 bg-card/50 backdrop-blur-sm p-3 rounded-lg inline-flex shadow-sm">
+              <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
+              <ArrowRight className="w-4 h-4" />
+              <Link to="/all-jobs" className="hover:text-primary transition-colors">الوظائف</Link>
+              <ArrowRight className="w-4 h-4" />
+              <span className="text-foreground max-w-[200px] truncate">{job.title}</span>
+            </nav>
 
-              <div className="p-6 border-b border-border">
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <span className="country-badge">{job.country}</span>
-                  {job.job_type && <span className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">{job.job_type}</span>}
-                  {job.exclusive_tag && job.exclusive_tag !== 'none' && (
-                    <span className="px-3 py-1 rounded-full bg-accent text-accent-foreground text-sm font-medium">{exclusiveTagLabels[job.exclusive_tag]}</span>
+            <article className="bg-card rounded-2xl shadow-xl border border-border/50 overflow-hidden">
+              {/* AdSense Top Inside Card */}
+              <div className="px-4 py-6 border-b border-border/50">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-bold mb-1">تفاصيل الوظيفة</h2>
+                    <p className="text-muted-foreground text-sm">اقرأ الوصف والمتطلبات بعناية قبل التقديم</p>
+                  </div>
+                  {job.salary && (
+                    <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-4 py-2 rounded-xl flex items-center gap-2 font-bold border border-green-200 dark:border-green-800">
+                      <Banknote className="w-5 h-5" />
+                      {job.salary}
+                    </div>
                   )}
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">{job.title}</h1>
-                <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
-                  {job.company && <span className="flex items-center gap-2"><Building2 className="w-5 h-5" />{job.company}</span>}
-                  <span className="flex items-center gap-2"><MapPin className="w-5 h-5" />{job.country}</span>
-                  <span className="flex items-center gap-2"><Calendar className="w-5 h-5" />{formatDate(job.created_at)}</span>
-                </div>
-                {job.salary && <p className="flex items-center gap-2 text-primary font-bold text-xl mt-4"><Banknote className="w-5 h-5" />{job.salary}</p>}
               </div>
 
               <div className="p-6 space-y-6">

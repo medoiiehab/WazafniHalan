@@ -4,6 +4,7 @@ import { Calendar, User, Loader2 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import AdSense from '@/components/common/AdSense';
 import { usePublishedBlogPosts } from '@/hooks/useBlogPosts';
+import PageHeader from '@/components/layout/PageHeader';
 
 const Blog = () => {
   const { data: blogPosts = [], isLoading } = usePublishedBlogPosts();
@@ -15,21 +16,19 @@ const Blog = () => {
   return (
     <Layout>
       <Helmet>
-        <title>المدونة - نصائح ومقالات عن سوق العمل | وظفني حالاً</title>
+        <title>نصائح الوظيفة - نصائح ومقالات عن سوق العمل | وظفني حالاً</title>
         <meta name="description" content="اقرأ أحدث المقالات والنصائح حول البحث عن وظيفة في الخليج العربي. نصائح للمقابلات، كتابة السيرة الذاتية، والمزيد." />
         <meta name="keywords" content="مقالات وظائف، نصائح توظيف، سيرة ذاتية، مقابلة عمل، سوق العمل الخليج" />
         <link rel="canonical" href="https://www.wazafnihalan.com/blog" />
-        <meta property="og:title" content="المدونة - نصائح ومقالات عن سوق العمل" />
+        <meta property="og:title" content="نصائح الوظيفة - نصائح ومقالات عن سوق العمل" />
         <meta property="og:description" content="اقرأ أحدث المقالات والنصائح حول البحث عن وظيفة في الخليج العربي." />
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <section className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground py-12">
-        <div className="container-custom text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">المدونة</h1>
-          <p className="text-lg opacity-90 max-w-2xl mx-auto">نصائح ومقالات مفيدة للباحثين عن عمل</p>
-        </div>
-      </section>
+      <PageHeader
+        title="نصائح الوظيفة"
+        subtitle="نصائح ومقالات مفيدة للباحثين عن عمل في الوطن العربي، من كتابة السيرة الذاتية إلى اجتياز المقابلات الشخصية."
+      />
 
       {/* AdSense 1 - After Hero */}
       <div className="py-4 overflow-hidden">

@@ -15,83 +15,93 @@ export interface SEOData {
   slug: string;
 }
 
+interface SEOIssue {
+  type: 'critical' | 'warning' | 'good';
+  message: string;
+}
+
 interface SEOScore {
   score: number;
-  issues: string[];
-  warnings: string[];
+  details: SEOIssue[];
 }
 
 const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }: SEOBarProps) => {
   const [focusKeyword, setFocusKeyword] = useState(focus_keyword);
-  const [seoScore, setSeoScore] = useState<SEOScore>({ score: 0, issues: [], warnings: [] });
+  const [seoScore, setSeoScore] = useState<SEOScore>({ score: 0, details: [] });
 
   // Calculate SEO score
   const calculateSEOScore = () => {
-    const issues: string[] = [];
-    const warnings: string[] = [];
     let score = 0;
+    const details: SEOIssue[] = [];
 
-    // Title checks
-    if (title.length === 0) {
-      issues.push("Add a title");
+    // 1. Title Analysis (Max 20 points)
+    if (!title) {
+      details.push({ type: 'critical', message: 'Add a title to content' });
     } else {
-      score += 15;
-      if (title.length < 30) {
-        warnings.push("Title is too short (min 30 characters)");
-      } else if (title.length > 60) {
-        warnings.push("Title is too long (max 60 characters)");
+      if (title.length >= 30 && title.length <= 60) {
+        score += 20;
+        details.push({ type: 'good', message: 'Title length is optimal (30-60 chars)' });
+      } else if (title.length < 30) {
+        score += 10;
+        details.push({ type: 'warning', message: 'Title is too short (min 30 chars)' });
       } else {
-        score += 5;
+        score += 10;
+        details.push({ type: 'warning', message: 'Title is too long (max 60 chars)' });
       }
 
-      // Keyword in title
       if (focusKeyword && title.toLowerCase().includes(focusKeyword.toLowerCase())) {
-        score += 10;
+        score += 10; // Extra points for keyword in title
+        details.push({ type: 'good', message: 'Focus keyword appears in title' });
+      } else if (focusKeyword) {
+        details.push({ type: 'warning', message: 'Focus keyword should appear in title' });
       }
     }
 
-    // Meta description checks
-    if (description.length === 0) {
-      issues.push("Add a meta description");
+    // 2. Meta Description Analysis (Max 20 points)
+    if (!description) {
+      details.push({ type: 'critical', message: 'Add a meta description' });
     } else {
-      score += 15;
-      if (description.length < 120) {
-        warnings.push("Meta description is too short (min 120 characters)");
-      } else if (description.length > 160) {
-        warnings.push("Meta description is too long (max 160 characters)");
+      if (description.length >= 120 && description.length <= 160) {
+        score += 20;
+        details.push({ type: 'good', message: 'Meta description length is optimal (120-160 chars)' });
+      } else if (description.length < 120) {
+        score += 10;
+        details.push({ type: 'warning', message: 'Meta description is too short (min 120 chars)' });
       } else {
-        score += 5;
-      }
-
-      // Keyword in description
-      if (focusKeyword && description.toLowerCase().includes(focusKeyword.toLowerCase())) {
         score += 10;
+        details.push({ type: 'warning', message: 'Meta description is too long (max 160 chars)' });
+      }
+
+      if (focusKeyword && description.toLowerCase().includes(focusKeyword.toLowerCase())) {
+        score += 10; // Extra points for keyword
+        details.push({ type: 'good', message: 'Focus keyword appears in meta description' });
+      } else if (focusKeyword) {
+        details.push({ type: 'warning', message: 'Focus keyword should appear in meta description' });
       }
     }
 
-    // Focus keyword checks
-    if (focusKeyword.trim() === "") {
-      warnings.push("Consider adding a focus keyword");
+    // 3. Slug Analysis (Max 10 points)
+    if (!slug) {
+      details.push({ type: 'critical', message: 'Add a URL slug' });
     } else {
-      score += 10;
-      if (focusKeyword.split(" ").length > 3) {
-        warnings.push("Focus keyword is too long (max 3 words)");
+      if (/^[a-z0-9-]+$/.test(slug)) {
+        score += 10;
+        details.push({ type: 'good', message: 'URL slug format is correct' });
+      } else {
+        details.push({ type: 'warning', message: 'Slug should only contain lowercase letters, numbers, and hyphens' });
       }
     }
 
-    // Slug checks
-    if (slug.trim() === "") {
-      warnings.push("Add a URL slug for better SEO");
+    // 4. Focus Keyword Analysis (Max 10 points)
+    if (!focusKeyword) {
+      details.push({ type: 'warning', message: 'Set a focus keyword to improve ranking analysis' });
     } else {
       score += 10;
+      details.push({ type: 'good', message: 'Focus keyword is set' });
     }
 
-    // Content length (rough check based on description)
-    if (description.length > 300) {
-      score += 10;
-    }
-
-    setSeoScore({ score: Math.min(score, 100), issues, warnings });
+    // Cap score at 100
+    setSeoScore({ score: Math.min(score, 100), details });
   };
 
   useEffect(() => {
@@ -143,11 +153,11 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
             </p>
           </div>
         </div>
-        <div className="w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-sm" 
-             style={{
-               borderColor: seoScore.score >= 80 ? '#16a34a' : seoScore.score >= 60 ? '#eab308' : '#dc2626',
-               color: seoScore.score >= 80 ? '#16a34a' : seoScore.score >= 60 ? '#ca8a04' : '#b91c1c'
-             }}>
+        <div className="w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-sm"
+          style={{
+            borderColor: seoScore.score >= 80 ? '#16a34a' : seoScore.score >= 60 ? '#eab308' : '#dc2626',
+            color: seoScore.score >= 80 ? '#16a34a' : seoScore.score >= 60 ? '#ca8a04' : '#b91c1c'
+          }}>
           {seoScore.score}
         </div>
       </div>
@@ -167,35 +177,49 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
         </p>
       </div>
 
-      {/* Issues */}
-      {seoScore.issues.length > 0 && (
-        <div className="mb-4 p-3 rounded bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800">
-          <h4 className="text-xs font-semibold text-red-700 dark:text-red-400 mb-2">Issues:</h4>
-          <ul className="text-xs text-red-600 dark:text-red-300 space-y-1">
-            {seoScore.issues.map((issue, i) => (
-              <li key={i} className="flex gap-2">
-                <span>•</span>
-                <span>{issue}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Analysis Details */}
+      <div className="space-y-3">
+        {['critical', 'warning', 'good'].map((type) => {
+          const items = seoScore.details.filter(d => d.type === type);
+          if (items.length === 0) return null;
 
-      {/* Warnings */}
-      {seoScore.warnings.length > 0 && (
-        <div className="mb-4 p-3 rounded bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-200 dark:border-yellow-800">
-          <h4 className="text-xs font-semibold text-yellow-700 dark:text-yellow-400 mb-2">Tips:</h4>
-          <ul className="text-xs text-yellow-600 dark:text-yellow-300 space-y-1">
-            {seoScore.warnings.map((warning, i) => (
-              <li key={i} className="flex gap-2">
-                <span>•</span>
-                <span>{warning}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+          let colorClass = '';
+          let bgClass = '';
+          let title = '';
+
+          switch (type) {
+            case 'critical':
+              colorClass = 'text-red-600 dark:text-red-400';
+              bgClass = 'bg-red-50 dark:bg-red-950/30 border-red-100 dark:border-red-900';
+              title = 'Critical Issues';
+              break;
+            case 'warning':
+              colorClass = 'text-yellow-600 dark:text-yellow-400';
+              bgClass = 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-100 dark:border-yellow-900';
+              title = 'Improvements';
+              break;
+            case 'good':
+              colorClass = 'text-green-600 dark:text-green-400';
+              bgClass = 'bg-green-50 dark:bg-green-950/30 border-green-100 dark:border-green-900';
+              title = 'Good Results';
+              break;
+          }
+
+          return (
+            <div key={type} className={`p-3 rounded border ${bgClass}`}>
+              <h4 className={`text-xs font-bold mb-2 ${colorClass}`}>{title}</h4>
+              <ul className="space-y-1">
+                {items.map((item, i) => (
+                  <li key={i} className={`text-xs flex gap-2 ${colorClass}`}>
+                    <span>•</span>
+                    <span>{item.message}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
 
       {/* Preview Section */}
       <div className="mt-4 p-3 rounded bg-background border border-border">

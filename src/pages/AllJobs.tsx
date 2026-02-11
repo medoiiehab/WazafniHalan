@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Search, Loader2, Filter, X, MapPin, Building2, Calendar } from 'lucide-react';
+import { Search, Loader2, Filter, X, MapPin, Building2, Calendar, TrendingUp } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import JobCard from '@/components/jobs/JobCard';
 import AdSense from '@/components/common/AdSense';
 import { useJobs } from '@/hooks/useJobs';
 import { countries } from '@/types/database';
+import PageHeader from '@/components/layout/PageHeader';
 
 const AllJobs = () => {
     const { countrySlug } = useParams<{ countrySlug?: string }>();
@@ -183,37 +184,37 @@ const AllJobs = () => {
             </Helmet>
 
             {/* Hero Section */}
-            <section className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground py-8 md:py-12">
-                <div className="container-custom px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-                            جميع الوظائف المتاحة
-                        </h1>
-                        <p className="text-base sm:text-lg md:text-xl opacity-90 mb-6">
-                            {allJobs.length} فرصة عمل في مختلف الدول والمجالات
-                        </p>
-                    </div>
-
-                    {/* Search Box */}
-                    <div className="max-w-3xl mx-auto">
-                        <div className="bg-card/20 backdrop-blur-sm rounded-xl p-2 shadow-lg flex">
-                            <div className="relative flex-1">
-                                <input
-                                    type="text"
-                                    placeholder="ابحث عن وظيفة، شركة، دولة، مجال..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-transparent border-0 text-white placeholder-white/70 focus:outline-none focus:ring-0 pr-10 py-3 text-base sm:text-lg"
-                                />
-                                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70" />
-                            </div>
-                        </div>
-                        <p className="text-xs sm:text-sm text-white/60 mt-2 text-center">
-                            ابحث في: العناوين • الشركات • الدول • الوسوم • الوصف
-                        </p>
-                    </div>
+            <PageHeader
+                title="جميع الوظائف المتاحة"
+                subtitle={`${allJobs.length} فرصة عمل في مختلف الدول والمجالات`}
+            >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs md:text-sm mb-6 animate-fade-in shadow-sm">
+                    <TrendingUp className="w-4 h-4 text-blue-300" />
+                    <span>نحدث الوظائف على مدار الساعة</span>
                 </div>
-            </section>
+                {/* Search Box */}
+                <div className="max-w-3xl mx-auto animate-slide-up animate-delay-200">
+                    <div className="glass-card p-2 md:p-3 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-3">
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                placeholder="ابحث عن الوظائف"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full bg-white text-foreground pr-12 pl-4 py-3 md:py-4 rounded-xl border-none focus:ring-2 focus:ring-blue-400 text-base md:text-lg transition-all placeholder:text-muted-foreground/60"
+                            />
+                            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-primary" />
+                        </div>
+                        <button className="bg-primary hover:bg-primary/90 text-white font-bold py-3 md:py-4 px-8 md:px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-2 text-base md:text-lg">
+                            <Search className="w-5 h-5" />
+                            <span>ابحث</span>
+                        </button>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white/70 mt-3 text-center animate-fade-in">
+                        ابحث في: العناوين • الشركات • الدول • الوسوم • الوصف
+                    </p>
+                </div>
+            </PageHeader>
 
             {/* AdSense - After Hero Section */}
             <div className="py-4 md:py-6 px-4 sm:px-6 lg:px-8 overflow-hidden">

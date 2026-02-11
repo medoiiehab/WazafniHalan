@@ -36,30 +36,43 @@ interface DailyAnalytics {
 export const useAnalyticsSummary = () => {
   return useQuery({
     queryKey: ['analytics-summary'],
+    refetchInterval: 15000,
     queryFn: async (): Promise<AnalyticsData> => {
       const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())).toISOString();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-      // Get all analytics
-      const { data: allAnalytics, error } = await supabase
-        .from('job_analytics')
-        .select('event_type, created_at');
+      // Strict UTC boundaries to match Supabase timestamps exactly
+      const startOfToday = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())).toISOString();
+      const startOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1)).toISOString();
 
-      if (error) throw error;
+      const dayOfWeek = now.getUTCDay(); // Use UTC day
+      const daysSinceSaturday = (dayOfWeek + 1) % 7;
+      const startOfWeek = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysSinceSaturday)).toISOString();
 
-      const analytics = allAnalytics || [];
+      const [
+        totalViews, totalClicks,
+        todayViews, todayClicks,
+        weekViews, weekClicks,
+        monthViews, monthClicks
+      ] = await Promise.all([
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'view'),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'click'),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'view').gte('created_at', startOfToday),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'click').gte('created_at', startOfToday),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'view').gte('created_at', startOfWeek),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'click').gte('created_at', startOfWeek),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'view').gte('created_at', startOfMonth),
+        supabase.from('job_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'click').gte('created_at', startOfMonth),
+      ]);
 
       return {
-        total_views: analytics.filter(a => a.event_type === 'view').length,
-        total_clicks: analytics.filter(a => a.event_type === 'click').length,
-        views_today: analytics.filter(a => a.event_type === 'view' && a.created_at >= startOfDay).length,
-        clicks_today: analytics.filter(a => a.event_type === 'click' && a.created_at >= startOfDay).length,
-        views_this_week: analytics.filter(a => a.event_type === 'view' && a.created_at >= startOfWeek).length,
-        clicks_this_week: analytics.filter(a => a.event_type === 'click' && a.created_at >= startOfWeek).length,
-        views_this_month: analytics.filter(a => a.event_type === 'view' && a.created_at >= startOfMonth).length,
-        clicks_this_month: analytics.filter(a => a.event_type === 'click' && a.created_at >= startOfMonth).length,
+        total_views: totalViews.count || 0,
+        total_clicks: totalClicks.count || 0,
+        views_today: todayViews.count || 0,
+        clicks_today: todayClicks.count || 0,
+        views_this_week: weekViews.count || 0,
+        clicks_this_week: weekClicks.count || 0,
+        views_this_month: monthViews.count || 0,
+        clicks_this_month: monthClicks.count || 0,
       };
     },
   });
@@ -68,31 +81,19 @@ export const useAnalyticsSummary = () => {
 export const useJobsAnalytics = () => {
   return useQuery({
     queryKey: ['jobs-analytics'],
+    refetchInterval: 30000,
     queryFn: async (): Promise<JobAnalytics[]> => {
-      // Get all analytics with job info
-      const { data: analytics, error: analyticsError } = await supabase
-        .from('job_analytics')
-        .select('job_id, event_type');
-
+      const { data: analytics, error: analyticsError } = await supabase.from('job_analytics').select('job_id, event_type');
       if (analyticsError) throw analyticsError;
 
-      // Get jobs
-      const { data: jobs, error: jobsError } = await supabase
-        .from('jobs')
-        .select('id, title');
-
+      const { data: jobs, error: jobsError } = await supabase.from('jobs').select('id, title');
       if (jobsError) throw jobsError;
 
-      // Group by job_id
       const jobMap = new Map<string, { views: number; clicks: number }>();
-      
       (analytics || []).forEach(a => {
         const existing = jobMap.get(a.job_id) || { views: 0, clicks: 0 };
-        if (a.event_type === 'view') {
-          existing.views++;
-        } else if (a.event_type === 'click') {
-          existing.clicks++;
-        }
+        if (a.event_type === 'view') existing.views++;
+        else if (a.event_type === 'click') existing.clicks++;
         jobMap.set(a.job_id, existing);
       });
 
@@ -112,50 +113,29 @@ export const useJobsAnalytics = () => {
 export const useCountryAnalytics = () => {
   return useQuery({
     queryKey: ['country-analytics'],
+    refetchInterval: 30000,
     queryFn: async (): Promise<CountryAnalytics[]> => {
-      // Get all analytics with job info
-      const { data: analytics, error: analyticsError } = await supabase
-        .from('job_analytics')
-        .select('job_id, event_type');
-
+      const { data: analytics, error: analyticsError } = await supabase.from('job_analytics').select('job_id, event_type');
       if (analyticsError) throw analyticsError;
 
-      // Get jobs with country info
-      const { data: jobs, error: jobsError } = await supabase
-        .from('jobs')
-        .select('id, country, country_slug');
-
+      const { data: jobs, error: jobsError } = await supabase.from('jobs').select('id, country, country_slug');
       if (jobsError) throw jobsError;
 
-      // Create job to country mapping
       const jobCountryMap = new Map<string, { country: string; country_slug: string }>();
-      (jobs || []).forEach(job => {
-        jobCountryMap.set(job.id, { country: job.country, country_slug: job.country_slug });
-      });
+      (jobs || []).forEach(job => jobCountryMap.set(job.id, { country: job.country, country_slug: job.country_slug }));
 
-      // Group analytics by country
       const countryMap = new Map<string, { country: string; views: number; clicks: number; jobs: Set<string> }>();
-      
       (analytics || []).forEach(a => {
         const jobInfo = jobCountryMap.get(a.job_id);
         if (jobInfo) {
-          const existing = countryMap.get(jobInfo.country_slug) || { 
-            country: jobInfo.country, 
-            views: 0, 
-            clicks: 0,
-            jobs: new Set<string>()
-          };
+          const existing = countryMap.get(jobInfo.country_slug) || { country: jobInfo.country, views: 0, clicks: 0, jobs: new Set<string>() };
           existing.jobs.add(a.job_id);
-          if (a.event_type === 'view') {
-            existing.views++;
-          } else if (a.event_type === 'click') {
-            existing.clicks++;
-          }
+          if (a.event_type === 'view') existing.views++;
+          else if (a.event_type === 'click') existing.clicks++;
           countryMap.set(jobInfo.country_slug, existing);
         }
       });
 
-      // Count total jobs per country
       const jobCountByCountry = new Map<string, number>();
       (jobs || []).forEach(job => {
         const count = jobCountByCountry.get(job.country_slug) || 0;
@@ -178,9 +158,11 @@ export const useCountryAnalytics = () => {
 export const useDailyAnalytics = (days: number = 7) => {
   return useQuery({
     queryKey: ['daily-analytics', days],
+    refetchInterval: 15000,
     queryFn: async (): Promise<DailyAnalytics[]> => {
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - days);
+      const now = new Date();
+      // Calculate start date in UTC
+      const startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - days + 1));
 
       const { data: analytics, error } = await supabase
         .from('job_analytics')
@@ -189,48 +171,51 @@ export const useDailyAnalytics = (days: number = 7) => {
 
       if (error) throw error;
 
-      // Group by date
+      // Initialize the map with UTC keys
       const dateMap = new Map<string, { views: number; clicks: number }>();
-      
-      // Initialize all dates
       for (let i = 0; i < days; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
-        dateMap.set(dateStr, { views: 0, clicks: 0 });
+        const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
+        const dateKey = d.toISOString().substring(0, 10); // "YYYY-MM-DD"
+        dateMap.set(dateKey, { views: 0, clicks: 0 });
       }
 
       (analytics || []).forEach(a => {
-        const dateStr = a.created_at.split('T')[0];
+        // Direct string extraction to avoid timezone shifts
+        // a.created_at is typically "YYYY-MM-DD HH:MM..."
+        const dateStr = a.created_at.substring(0, 10);
         const existing = dateMap.get(dateStr);
         if (existing) {
-          if (a.event_type === 'view') {
-            existing.views++;
-          } else if (a.event_type === 'click') {
-            existing.clicks++;
-          }
+          if (a.event_type === 'view') existing.views++;
+          else if (a.event_type === 'click') existing.clicks++;
         }
       });
 
       return Array.from(dateMap.entries())
-        .map(([date, data]) => ({
-          date,
-          views: data.views,
-          clicks: data.clicks,
-        }))
+        .map(([date, data]) => ({ date, views: data.views, clicks: data.clicks }))
         .sort((a, b) => a.date.localeCompare(b.date));
     },
   });
 };
 
 export const useTrackJobEvent = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async ({ jobId, eventType }: { jobId: string; eventType: 'view' | 'click' }) => {
       const { error } = await supabase
         .from('job_analytics')
-        .insert({ job_id: jobId, event_type: eventType });
+        .insert({
+          job_id: jobId,
+          event_type: eventType
+        });
 
       if (error) throw error;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['analytics-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['jobs-analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['country-analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['daily-analytics'] });
+    }
   });
 };
