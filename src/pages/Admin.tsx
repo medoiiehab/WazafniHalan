@@ -461,7 +461,13 @@ const Admin = () => {
       setAddUserForm({ email: "", password: "", role: "user" });
       handleSearchUsers("");
     } catch (error: any) {
-      toast({ title: "خطأ في إنشاء المستخدم", description: error.message, variant: "destructive" });
+      console.error("Error creating user - Full details:", error);
+      const errorMsg = error.message || "عذراً، حدث خطأ أثناء إنشاء المستخدم";
+      toast({
+        title: "خطأ في إنشاء المستخدم",
+        description: errorMsg,
+        variant: "destructive"
+      });
     } finally {
       setIsCreatingUser(false);
     }

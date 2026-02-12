@@ -15,7 +15,7 @@ export const useAuth = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         // Check roles after auth state change
         if (session?.user) {
           setTimeout(() => {
@@ -48,14 +48,19 @@ export const useAuth = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', userId);
-      
+
       if (error) {
-        console.error('Error checking roles:', error);
+        console.error('Error checking roles - Query details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
         setIsAdmin(false);
         setIsEmployee(false);
         return;
       }
-      
+
       const roles = data?.map(r => r.role) || [];
       setIsAdmin(roles.includes('admin'));
       setIsEmployee(roles.includes('employee'));

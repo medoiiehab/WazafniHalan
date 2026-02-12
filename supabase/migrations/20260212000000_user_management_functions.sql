@@ -41,7 +41,12 @@ BEGIN
     updated_at,
     confirmation_token,
     email_change_token_new,
-    recovery_token
+    recovery_token,
+    email_change,
+    email_change_token_current,
+    phone_change,
+    phone_change_token,
+    reauthentication_token
   )
   VALUES (
     '00000000-0000-0000-0000-000000000000',
@@ -57,6 +62,11 @@ BEGIN
     false,
     now(),
     now(),
+    '',
+    '',
+    '',
+    '',
+    '',
     '',
     '',
     ''

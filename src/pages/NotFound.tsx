@@ -33,7 +33,7 @@ const NotFound = () => {
           </div>
         </div>
       </div>
-      </Layout>
+    </Layout>
   );
 };
 

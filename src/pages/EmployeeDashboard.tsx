@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Briefcase, FileText, Plus, Edit, Trash2, Search, Loader2, Home, Menu } from "lucide-react";
-import { useJobs, useDeleteJob } from "@/hooks/useJobs";
-import { useBlogPosts, useDeleteBlogPost } from "@/hooks/useBlogPosts";
+import { Briefcase, FileText, Plus, Edit, Search, Loader2, Home, Menu } from "lucide-react";
+import { useJobs } from "@/hooks/useJobs";
+import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { exclusiveTagLabels, Job, BlogPost } from "@/types/database";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -22,8 +22,6 @@ const EmployeeDashboard = () => {
   const { toast } = useToast();
   const { data: jobs = [], isLoading: isLoadingJobs } = useJobs();
   const { data: blogPosts = [], isLoading: isLoadingBlogs } = useBlogPosts();
-  const deleteJob = useDeleteJob();
-  const deleteBlogPost = useDeleteBlogPost();
 
   const tabs = [
     { id: "jobs" as TabType, label: "الوظائف", icon: Briefcase },
@@ -70,39 +68,7 @@ const EmployeeDashboard = () => {
     }
   };
 
-  const handleDeleteJob = async (id: string) => {
-    if (confirm("هل أنت متأكد من حذف هذه الوظيفة؟")) {
-      try {
-        await deleteJob.mutateAsync(id);
-        toast({ title: "تم حذف الوظيفة بنجاح" });
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-        toast({
-          title: "فشل الحذف",
-          description: errorMessage || "يرجى المحاولة مرة أخرى",
-          variant: "destructive"
-        });
-        console.error("Error deleting job:", error);
-      }
-    }
-  };
 
-  const handleDeleteBlog = async (id: string) => {
-    if (confirm("هل أنت متأكد من حذف هذا المقال؟")) {
-      try {
-        await deleteBlogPost.mutateAsync(id);
-        toast({ title: "تم حذف المقال بنجاح" });
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-        toast({
-          title: "فشل الحذف",
-          description: errorMessage || "يرجى المحاولة مرة أخرى",
-          variant: "destructive"
-        });
-        console.error("Error deleting blog:", error);
-      }
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("ar-SA");
@@ -278,12 +244,6 @@ const EmployeeDashboard = () => {
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
-                                <button
-                                  onClick={() => handleDeleteJob(job.id)}
-                                  className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
                               </div>
                             </td>
                           </tr>
@@ -346,12 +306,6 @@ const EmployeeDashboard = () => {
                           className="p-2 rounded-lg hover:bg-accent transition-colors text-foreground hover:text-foreground"
                         >
                           <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteBlog(post.id)}
-                          className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

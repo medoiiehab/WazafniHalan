@@ -1,2 +1,0 @@
-Quill has been installed Via Npm as we use vite, so Change all of the rich text editor to quilljs and use all of it's features to give to the editor freedom in editing. Ensure it adapts to arabic and english languages.
-if it's not optimal to use quill then just update the rich text editor to have the same features of quilljs. 
