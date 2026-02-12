@@ -87,7 +87,7 @@ const FeaturedJobsSlider = ({ jobs }: FeaturedJobsSliderProps) => {
                 {job.title}
               </h3>
 
-              <div className="flex flex-col gap-1 text-sm text-muted-foreground mb-2">
+              <div className="flex flex-col gap-1 text-sm text-foreground font-medium mb-2">
                 {job.company && (
                   <span className="flex items-center gap-1">
                     <Building2 className="w-4 h-4" />

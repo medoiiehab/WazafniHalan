@@ -33,7 +33,7 @@ const Sidebar = ({ showSearch = true }: SidebarProps) => {
             <li key={category}>
               <Link
                 to={`/category/${encodeURIComponent(category)}`}
-                className="block py-2 px-3 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-colors text-sm"
+                className="block py-2 px-3 rounded-lg text-foreground hover:bg-accent hover:text-foreground transition-colors text-sm font-medium"
               >
                 {category}
               </Link>
@@ -53,7 +53,7 @@ const Sidebar = ({ showSearch = true }: SidebarProps) => {
             <li key={country.slug}>
               <Link
                 to={`/jobs/${country.slug}`}
-                className="flex items-center gap-2 py-2 px-3 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-colors text-sm"
+                className="flex items-center gap-2 py-2 px-3 rounded-lg text-foreground hover:bg-accent hover:text-foreground transition-colors text-sm font-medium"
               >
                 <span>{country.flag}</span>
                 <span>{country.name}</span>

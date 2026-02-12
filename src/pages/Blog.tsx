@@ -63,8 +63,8 @@ const Blog = () => {
                     </div>
                   </div>
                   <h2 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">{post.title}</h2>
-                  {post.excerpt && <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>}
-                  <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t border-border mt-auto">
+                  {post.excerpt && <p className="text-sm text-foreground line-clamp-2 mb-4">{post.excerpt}</p>}
+                  <div className="flex items-center justify-between text-sm text-foreground pt-4 border-t border-border mt-auto">
                     <span className="flex items-center gap-1"><User className="w-4 h-4" />{post.author}</span>
                     <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formatDate(post.created_at)}</span>
                   </div>

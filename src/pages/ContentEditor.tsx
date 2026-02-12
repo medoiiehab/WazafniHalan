@@ -27,8 +27,10 @@ const ContentEditor = () => {
     const { type, id } = useParams<{ type: "job" | "blog"; id: string }>();
     const navigate = useNavigate();
     const { toast } = useToast();
-    const { user } = useAuth();
+    const { user, isAdmin } = useAuth();
     const queryClient = useQueryClient();
+
+    const returnPath = isAdmin ? "/admin" : "/employee";
 
     const isJob = type === "job";
     const isEditMode = !!id;
@@ -171,7 +173,7 @@ const ContentEditor = () => {
                 } else {
                     await createJob.mutateAsync(jobPayload);
                     toast({ title: "تم إضافة الوظيفة بنجاح" });
-                    navigate("/admin"); // Or redirect to edit mode
+                    navigate(returnPath); // Return to the appropriate dashboard
                 }
             } else {
                 const blogPayload = {
@@ -193,7 +195,7 @@ const ContentEditor = () => {
                 } else {
                     await createBlogPost.mutateAsync(blogPayload);
                     toast({ title: "تم نشر المقال بنجاح" });
-                    navigate("/admin");
+                    navigate(returnPath);
                 }
             }
 
@@ -219,14 +221,14 @@ const ContentEditor = () => {
             {/* Header */}
             <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-card sticky top-0 z-50">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => navigate("/admin")}>
+                    <Button variant="ghost" size="icon" onClick={() => navigate(returnPath)}>
                         <ArrowRight className="w-5 h-5" />
                     </Button>
                     <div className="flex flex-col">
                         <span className="font-bold text-lg">
                             {isEditMode ? "تعديل" : "إضافة"} {isJob ? "وظيفة" : "مقال"}
                         </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <span className="text-xs text-foreground flex items-center gap-1">
                             {isSaving ? "جاري الحفظ..." : "تم الحفظ تلقائياً"}
                         </span>
                     </div>
@@ -301,7 +303,7 @@ const ContentEditor = () => {
                     <div className="max-w-4xl mx-auto space-y-6 p-8">
                         <Input
                             placeholder="عنـــوان الموضــوع..."
-                            className="text-3xl font-bold border-none px-0 shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/50 h-auto py-4"
+                            className="text-3xl font-bold border-none px-0 shadow-none focus-visible:ring-0 placeholder:text-foreground/50 h-auto py-4"
                             value={title}
                             onChange={e => setTitle(e.target.value)}
                         />
@@ -379,6 +381,21 @@ const ContentEditor = () => {
                             إعدادات {isJob ? "الوظيفة" : "المقال"}
                         </h3>
 
+                        <div className="space-y-2">
+                            <Label>رابط الصورة (Image URL)</Label>
+                            <Input value={imageUrl} onChange={e => setImageUrl(e.target.value)} dir="ltr" placeholder="https://..." />
+                            {imageUrl && (
+                                <div className="mt-2 rounded-lg border border-border overflow-hidden bg-muted">
+                                    <img
+                                        src={imageUrl}
+                                        alt="Preview"
+                                        className="w-full h-32 object-contain"
+                                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
                         {isJob ? (
                             <>
                                 <div className="space-y-2">
@@ -447,10 +464,6 @@ const ContentEditor = () => {
                             </>
                         ) : (
                             <>
-                                <div className="space-y-2">
-                                    <Label>صورة الغلاف (رابط)</Label>
-                                    <Input value={imageUrl} onChange={e => setImageUrl(e.target.value)} dir="ltr" />
-                                </div>
                                 <div className="space-y-2">
                                     <Label>الكاتب</Label>
                                     <Input value={author} onChange={e => setAuthor(e.target.value)} />

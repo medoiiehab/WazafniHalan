@@ -1,78 +1,29 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Briefcase, FileText, Plus, Edit, Trash2, Search, Loader2, Home, Globe, Menu } from "lucide-react";
-import { useJobs, useCreateJob, useUpdateJob, useDeleteJob } from "@/hooks/useJobs";
-import { useBlogPosts, useCreateBlogPost, useUpdateBlogPost, useDeleteBlogPost } from "@/hooks/useBlogPosts";
-import { countries, exclusiveTagLabels, JobExclusiveTag, Job, BlogPost } from "@/types/database";
+import { Briefcase, FileText, Plus, Edit, Trash2, Search, Loader2, Home, Menu } from "lucide-react";
+import { useJobs, useDeleteJob } from "@/hooks/useJobs";
+import { useBlogPosts, useDeleteBlogPost } from "@/hooks/useBlogPosts";
+import { exclusiveTagLabels, Job, BlogPost } from "@/types/database";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
-import RichTextEditor from "@/components/editor/RichTextEditor";
-import SEOBar from "@/components/editor/SEOBar";
 
 type TabType = "jobs" | "blog";
 
 const EmployeeDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("jobs");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
-  const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
-  const [editingJob, setEditingJob] = useState<Job | null>(null);
-  const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
-
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const { data: jobs = [], isLoading: isLoadingJobs } = useJobs();
-  const { data: blogPosts = [], isLoading: isLoadingBlogs } = useBlogPosts();
-  const createJob = useCreateJob();
-  const updateJob = useUpdateJob();
-  const deleteJob = useDeleteJob();
-  const createBlogPost = useCreateBlogPost();
-  const updateBlogPost = useUpdateBlogPost();
-  const deleteBlogPost = useDeleteBlogPost();
-
-  // Job form state
-  const [jobForm, setJobForm] = useState({
-    title: "",
-    slug: "",
-    description: "",
-    short_description: "",
-    company: "",
-    country: "الكويت",
-    country_slug: "kuwait",
-    salary: "",
-    job_type: "دوام كامل",
-    requirements: "",
-    tags: "",
-    exclusive_tag: "none" as JobExclusiveTag,
-    apply_link: "",
-    is_featured: false,
-    image_url: "",
-    editor: "",
-    is_published: true,
-    focus_keyword: "",
-  });
-
-  // Blog form state
-  const [blogForm, setBlogForm] = useState({
-    title: "",
-    slug: "",
-    excerpt: "",
-    content: "",
-    image_url: "",
-    author: "فريق وظفني حالاً",
-    tags: "",
-    is_published: true,
-    meta_title: "",
-    meta_description: "",
-    focus_keyword: "",
-  });
-
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
   const [blogStatusFilter, setBlogStatusFilter] = useState<"all" | "published" | "draft">("all");
+
+  const { toast } = useToast();
+  const { data: jobs = [], isLoading: isLoadingJobs } = useJobs();
+  const { data: blogPosts = [], isLoading: isLoadingBlogs } = useBlogPosts();
+  const deleteJob = useDeleteJob();
+  const deleteBlogPost = useDeleteBlogPost();
 
   const tabs = [
     { id: "jobs" as TabType, label: "الوظائف", icon: Briefcase },
@@ -103,145 +54,19 @@ const EmployeeDashboard = () => {
     }
   );
 
-  const openJobModal = (job?: Job) => {
+  const openJobEditor = (job?: Job) => {
     if (job) {
-      setEditingJob(job);
-      setJobForm({
-        title: job.title,
-        slug: job.slug || "",
-        description: job.description,
-        short_description: job.short_description || "",
-        company: job.company || "",
-        country: job.country,
-        country_slug: job.country_slug,
-        salary: job.salary || "",
-        job_type: job.job_type || "دوام كامل",
-        requirements: job.requirements?.join("\n") || "",
-        tags: job.tags?.join(", ") || "",
-        exclusive_tag: job.exclusive_tag || "none",
-        apply_link: job.apply_link || "",
-        is_featured: job.is_featured || false,
-        image_url: job.image_url || "",
-        editor: job.editor || "",
-        is_published: job.is_published ?? true,
-        focus_keyword: job.tags?.[0] || "",
-      });
+      navigate(`/editor/job/${job.id}`);
     } else {
-      setEditingJob(null);
-      setJobForm({
-        title: "",
-        slug: "",
-        description: "",
-        short_description: "",
-        company: "",
-        country: "الكويت",
-        country_slug: "kuwait",
-        salary: "",
-        job_type: "دوام كامل",
-        requirements: "",
-        tags: "",
-        exclusive_tag: "none",
-        apply_link: "",
-        is_featured: false,
-        image_url: "",
-        editor: user?.id || "",
-        is_published: true,
-        focus_keyword: "",
-      });
+      navigate("/editor/job");
     }
-    setIsJobModalOpen(true);
   };
 
-  const openBlogModal = (blog?: BlogPost) => {
+  const openBlogEditor = (blog?: BlogPost) => {
     if (blog) {
-      setEditingBlog(blog);
-      setBlogForm({
-        title: blog.title,
-        slug: blog.slug,
-        excerpt: blog.excerpt || "",
-        content: blog.content,
-        image_url: blog.image_url || "",
-        author: blog.author || "فريق وظفني حالاً",
-        tags: blog.tags?.join(", ") || "",
-        is_published: blog.is_published ?? true,
-        meta_title: blog.meta_title || "",
-        meta_description: blog.meta_description || "",
-        focus_keyword: blog.tags?.[0] || "",
-      });
+      navigate(`/editor/blog/${blog.id}`);
     } else {
-      setEditingBlog(null);
-      setBlogForm({
-        title: "",
-        slug: "",
-        excerpt: "",
-        content: "",
-        image_url: "",
-        author: "فريق وظفني حالاً",
-        tags: "",
-        is_published: true,
-        meta_title: "",
-        meta_description: "",
-        focus_keyword: "",
-      });
-    }
-    setIsBlogModalOpen(true);
-  };
-
-  const handleSaveJob = async () => {
-    // Validation
-    if (!jobForm.title.trim()) {
-      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال عنوان الوظيفة", variant: "destructive" });
-      return;
-    }
-    if (!jobForm.description.trim()) {
-      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال وصف الوظيفة", variant: "destructive" });
-      return;
-    }
-
-    try {
-      const slug = jobForm.slug.trim() || jobForm.title.toLowerCase().replace(/\s+/g, "-");
-
-      const jobData = {
-        title: jobForm.title,
-        slug: slug,
-        description: jobForm.description,
-        short_description: jobForm.short_description || null,
-        company: jobForm.company || null,
-        country: jobForm.country,
-        country_slug: jobForm.country_slug,
-        salary: jobForm.salary || null,
-        job_type: jobForm.job_type || null,
-        requirements: jobForm.requirements ? jobForm.requirements.split("\n").filter((r) => r.trim()) : null,
-        tags: jobForm.tags
-          ? jobForm.tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => t)
-          : null,
-        exclusive_tag: jobForm.exclusive_tag,
-        apply_link: jobForm.apply_link || null,
-        is_featured: jobForm.is_featured,
-        image_url: jobForm.image_url || null,
-        editor: jobForm.editor || user?.id || null,
-        is_published: jobForm.is_published,
-      };
-
-      if (editingJob) {
-        await updateJob.mutateAsync({ id: editingJob.id, ...jobData });
-        toast({ title: "تم تحديث الوظيفة بنجاح" });
-      } else {
-        await createJob.mutateAsync(jobData);
-        toast({ title: "تم إضافة الوظيفة بنجاح" });
-      }
-      setIsJobModalOpen(false);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-      toast({
-        title: "حدث خطأ",
-        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى",
-        variant: "destructive"
-      });
-      console.error("Error saving job:", error);
+      navigate("/editor/blog");
     }
   };
 
@@ -262,55 +87,6 @@ const EmployeeDashboard = () => {
     }
   };
 
-  const handleSaveBlog = async () => {
-    // Validation
-    if (!blogForm.title.trim()) {
-      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال عنوان المقال", variant: "destructive" });
-      return;
-    }
-    if (!blogForm.content.trim()) {
-      toast({ title: "خطأ في التحقق", description: "الرجاء إدخال محتوى المقال", variant: "destructive" });
-      return;
-    }
-
-    try {
-      const blogData = {
-        title: blogForm.title,
-        slug: blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-"),
-        excerpt: blogForm.excerpt || null,
-        content: blogForm.content,
-        image_url: blogForm.image_url || null,
-        author: blogForm.author || null,
-        tags: blogForm.tags
-          ? blogForm.tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => t)
-          : null,
-        is_published: blogForm.is_published,
-        meta_title: blogForm.meta_title || null,
-        meta_description: blogForm.meta_description || null,
-      };
-
-      if (editingBlog) {
-        await updateBlogPost.mutateAsync({ id: editingBlog.id, ...blogData });
-        toast({ title: "تم تحديث المقال بنجاح" });
-      } else {
-        await createBlogPost.mutateAsync(blogData);
-        toast({ title: "تم إضافة المقال بنجاح" });
-      }
-      setIsBlogModalOpen(false);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "فشل الاتصال بالخادم";
-      toast({
-        title: "حدث خطأ",
-        description: errorMessage || "يرجى التحقق من الاتصال والمحاولة مرة أخرى",
-        variant: "destructive"
-      });
-      console.error("Error saving blog:", error);
-    }
-  };
-
   const handleDeleteBlog = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذا المقال؟")) {
       try {
@@ -325,17 +101,6 @@ const EmployeeDashboard = () => {
         });
         console.error("Error deleting blog:", error);
       }
-    }
-  };
-
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCountry = countries.find((c) => c.name === e.target.value);
-    if (selectedCountry) {
-      setJobForm({
-        ...jobForm,
-        country: selectedCountry.name,
-        country_slug: selectedCountry.slug,
-      });
     }
   };
 
@@ -364,7 +129,7 @@ const EmployeeDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-right ${activeTab === tab.id
                 ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                : "text-foreground hover:bg-accent hover:text-foreground"
                 }`}
             >
               <tab.icon className="w-5 h-5" />
@@ -377,7 +142,7 @@ const EmployeeDashboard = () => {
       <div className={mobile ? "mt-auto py-6 border-t border-border" : "absolute bottom-0 right-0 left-0 p-6 border-t border-border"}>
         <Link
           to="/"
-          className="flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center justify-center gap-2 text-foreground hover:text-foreground transition-colors"
         >
           <Home className="w-4 h-4" />
           العودة للموقع
@@ -431,7 +196,7 @@ const EmployeeDashboard = () => {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-foreground">إدارة الوظائف</h1>
-                <button onClick={() => openJobModal()} className="btn-primary inline-flex items-center gap-2">
+                <button onClick={() => openJobEditor()} className="btn-primary inline-flex items-center gap-2">
                   <Plus className="w-5 h-5" />
                   إضافة وظيفة
                 </button>
@@ -447,7 +212,7 @@ const EmployeeDashboard = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="input-field pr-10"
                     />
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
                   </div>
                   <div className="flex items-center gap-2">
                     <select
@@ -471,12 +236,12 @@ const EmployeeDashboard = () => {
                     <table className="w-full">
                       <thead className="bg-muted">
                         <tr>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">العنوان</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الشركة</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الدولة</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الوسم</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">التاريخ</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الإجراءات</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">العنوان</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الشركة</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الدولة</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الوسم</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">التاريخ</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الإجراءات</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -490,13 +255,13 @@ const EmployeeDashboard = () => {
                                 </span>
                               )}
                               {!job.is_published && (
-                                <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">
+                                <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-foreground text-xs">
                                   مسودة
                                 </span>
                               )}
                             </td>
-                            <td className="py-3 px-4 text-muted-foreground">{job.company}</td>
-                            <td className="py-3 px-4 text-muted-foreground">{job.country}</td>
+                            <td className="py-3 px-4 text-foreground">{job.company}</td>
+                            <td className="py-3 px-4 text-foreground">{job.country}</td>
                             <td className="py-3 px-4">
                               {job.exclusive_tag && job.exclusive_tag !== "none" && (
                                 <span className="px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-xs">
@@ -504,18 +269,18 @@ const EmployeeDashboard = () => {
                                 </span>
                               )}
                             </td>
-                            <td className="py-3 px-4 text-muted-foreground">{formatDate(job.created_at)}</td>
+                            <td className="py-3 px-4 text-foreground">{formatDate(job.created_at)}</td>
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2">
                                 <button
-                                  onClick={() => openJobModal(job)}
-                                  className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                                  onClick={() => openJobEditor(job)}
+                                  className="p-2 rounded-lg hover:bg-accent transition-colors text-foreground hover:text-foreground"
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteJob(job.id)}
-                                  className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                                  className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -536,7 +301,7 @@ const EmployeeDashboard = () => {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-foreground">إدارة المدونة</h1>
-                <button onClick={() => openBlogModal()} className="btn-primary inline-flex items-center gap-2">
+                <button onClick={() => openBlogEditor()} className="btn-primary inline-flex items-center gap-2">
                   <Plus className="w-5 h-5" />
                   مقال جديد
                 </button>
@@ -566,10 +331,10 @@ const EmployeeDashboard = () => {
                     >
                       <div>
                         <h3 className="font-bold text-foreground mb-1">{post.title}</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-foreground">
                           {post.author} • {formatDate(post.created_at)}
                           {!post.is_published && (
-                            <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">
+                            <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-foreground text-xs">
                               مسودة
                             </span>
                           )}
@@ -577,14 +342,14 @@ const EmployeeDashboard = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => openBlogModal(post)}
-                          className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                          onClick={() => openBlogEditor(post)}
+                          className="p-2 rounded-lg hover:bg-accent transition-colors text-foreground hover:text-foreground"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteBlog(post.id)}
-                          className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                          className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -597,371 +362,7 @@ const EmployeeDashboard = () => {
           )}
         </main>
       </div>
-
-      {/* Job Modal */}
-      <Dialog open={isJobModalOpen} onOpenChange={setIsJobModalOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" dir="rtl">
-          <DialogHeader>
-            <DialogTitle>{editingJob ? "تعديل الوظيفة" : "إضافة وظيفة جديدة"}</DialogTitle>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">عنوان الوظيفة *</label>
-                <input
-                  type="text"
-                  value={jobForm.title}
-                  onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
-                  className="input-field"
-                  placeholder="مثال: مطور واجهات أمامية"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الرابط (Slug)</label>
-                <input
-                  type="text"
-                  value={jobForm.slug}
-                  onChange={(e) => setJobForm({ ...jobForm, slug: e.target.value })}
-                  className="input-field"
-                  dir="ltr"
-                  placeholder="يُنشأ تلقائياً من العنوان"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  سيُستخدم في رابط الوظيفة: /job/{jobForm.slug || jobForm.title.toLowerCase().replace(/\s+/g, "-")}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الشركة</label>
-                <input
-                  type="text"
-                  value={jobForm.company}
-                  onChange={(e) => setJobForm({ ...jobForm, company: e.target.value })}
-                  className="input-field"
-                  placeholder="اسم الشركة"
-                />
-              </div>
-              <div></div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الدولة *</label>
-                <select value={jobForm.country} onChange={handleCountryChange} className="input-field">
-                  {countries.map((country) => (
-                    <option key={country.slug} value={country.name}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">نوع العمل</label>
-                <select
-                  value={jobForm.job_type}
-                  onChange={(e) => setJobForm({ ...jobForm, job_type: e.target.value })}
-                  className="input-field"
-                >
-                  <option value="دوام كامل">دوام كامل</option>
-                  <option value="دوام جزئي">دوام جزئي</option>
-                  <option value="عن بعد">عن بعد</option>
-                  <option value="عقد">عقد</option>
-                  <option value="تدريب">تدريب</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الراتب</label>
-                <input
-                  type="text"
-                  value={jobForm.salary}
-                  onChange={(e) => setJobForm({ ...jobForm, salary: e.target.value })}
-                  className="input-field"
-                  placeholder="مثال: 3000 - 5000 دولار"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الوسم المميز</label>
-                <select
-                  value={jobForm.exclusive_tag}
-                  onChange={(e) => setJobForm({ ...jobForm, exclusive_tag: e.target.value as JobExclusiveTag })}
-                  className="input-field"
-                >
-                  <option value="none">بدون وسم</option>
-                  <option value="new">جديد</option>
-                  <option value="best">الأفضل</option>
-                  <option value="high_pay">راتب مرتفع</option>
-                  <option value="urgent">عاجل</option>
-                  <option value="featured">مميز</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">وصف مختصر</label>
-              <input
-                type="text"
-                value={jobForm.short_description}
-                onChange={(e) => setJobForm({ ...jobForm, short_description: e.target.value })}
-                className="input-field"
-                placeholder="وصف قصير للوظيفة"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">الوصف الكامل *</label>
-              <div className="min-h-[500px] overflow-visible">
-                <RichTextEditor
-                  value={jobForm.description}
-                  onChange={(value) => setJobForm({ ...jobForm, description: value })}
-                  placeholder="وصف تفصيلي للوظيفة..."
-                  className="h-full"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">المتطلبات (سطر لكل متطلب)</label>
-              <textarea
-                value={jobForm.requirements}
-                onChange={(e) => setJobForm({ ...jobForm, requirements: e.target.value })}
-                className="input-field min-h-[100px]"
-                placeholder="خبرة 3 سنوات&#10;إجادة اللغة الإنجليزية&#10;شهادة جامعية"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  الكلمات المفتاحية (مفصولة بفاصلة)
-                </label>
-                <input
-                  type="text"
-                  value={jobForm.tags}
-                  onChange={(e) => setJobForm({ ...jobForm, tags: e.target.value })}
-                  className="input-field"
-                  placeholder="برمجة, تطوير, React"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">رابط التقديم</label>
-                <input
-                  type="url"
-                  value={jobForm.apply_link}
-                  onChange={(e) => setJobForm({ ...jobForm, apply_link: e.target.value })}
-                  className="input-field"
-                  placeholder="https://..."
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">رابط الصورة</label>
-              <input
-                type="url"
-                value={jobForm.image_url}
-                onChange={(e) => setJobForm({ ...jobForm, image_url: e.target.value })}
-                className="input-field"
-                placeholder="https://..."
-              />
-            </div>
-
-            <div className="mt-6">
-              <SEOBar
-                title={jobForm.title}
-                description={jobForm.short_description}
-                slug={jobForm.title.toLowerCase().replace(/\s+/g, "-")}
-                focus_keyword={jobForm.focus_keyword}
-                onChange={(seo) => setJobForm({ ...jobForm, focus_keyword: seo.focus_keyword })}
-              />
-            </div>
-
-            <div className="flex items-center gap-2 mt-4">
-              <input
-                type="checkbox"
-                id="is_featured"
-                checked={jobForm.is_featured}
-                onChange={(e) => setJobForm({ ...jobForm, is_featured: e.target.checked })}
-                className="w-4 h-4 rounded border-border"
-              />
-              <label htmlFor="is_featured" className="text-sm font-medium text-foreground">
-                وظيفة مميزة
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2 mt-2">
-              <input
-                type="checkbox"
-                id="is_published_job"
-                checked={jobForm.is_published}
-                onChange={(e) => setJobForm({ ...jobForm, is_published: e.target.checked })}
-                className="w-4 h-4 rounded border-border"
-              />
-              <label htmlFor="is_published_job" className="text-sm font-medium text-foreground">
-                نشر الوظيفة
-              </label>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setIsJobModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors"
-            >
-              إلغاء
-            </button>
-            <button
-              onClick={handleSaveJob}
-              disabled={!jobForm.title || !jobForm.description}
-              className="btn-primary disabled:opacity-50"
-            >
-              {editingJob ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Blog Modal */}
-      <Dialog open={isBlogModalOpen} onOpenChange={setIsBlogModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" dir="rtl">
-          <DialogHeader>
-            <DialogTitle>{editingBlog ? "تعديل المقال" : "إضافة مقال جديد"}</DialogTitle>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">عنوان المقال *</label>
-                <input
-                  type="text"
-                  value={blogForm.title}
-                  onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
-                  className="input-field"
-                  placeholder="عنوان المقال"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الرابط المختصر (Slug)</label>
-                <input
-                  type="text"
-                  value={blogForm.slug}
-                  onChange={(e) => setBlogForm({ ...blogForm, slug: e.target.value })}
-                  className="input-field"
-                  dir="ltr"
-                  placeholder="يُنشأ تلقائياً من العنوان"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  سيُستخدم في رابط المقال: /blog/{blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">الكاتب</label>
-                <input
-                  type="text"
-                  value={blogForm.author}
-                  onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })}
-                  className="input-field"
-                  placeholder="اسم الكاتب"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  الكلمات المفتاحية (مفصولة بفاصلة)
-                </label>
-                <input
-                  type="text"
-                  value={blogForm.tags}
-                  onChange={(e) => setBlogForm({ ...blogForm, tags: e.target.value })}
-                  className="input-field"
-                  placeholder="نصائح, سيرة ذاتية, مقابلات"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">المقتطف</label>
-              <textarea
-                value={blogForm.excerpt}
-                onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
-                className="input-field min-h-[80px]"
-                placeholder="ملخص قصير للمقال"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">المحتوى *</label>
-              <div className="min-h-[500px] overflow-visible">
-                <RichTextEditor
-                  value={blogForm.content}
-                  onChange={(value) => setBlogForm({ ...blogForm, content: value })}
-                  placeholder="Type Your Content"
-                  className="h-full"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">رابط الصورة</label>
-              <input
-                type="url"
-                value={blogForm.image_url}
-                onChange={(e) => setBlogForm({ ...blogForm, image_url: e.target.value })}
-                className="input-field"
-                placeholder="https://..."
-              />
-            </div>
-
-            {/* SEO Section */}
-            <div className="mt-6">
-              <SEOBar
-                title={blogForm.meta_title || blogForm.title}
-                description={blogForm.meta_description}
-                slug={blogForm.slug || blogForm.title.toLowerCase().replace(/\s+/g, "-")}
-                focus_keyword={blogForm.focus_keyword}
-                onChange={(seo) => setBlogForm({ ...blogForm, focus_keyword: seo.focus_keyword })}
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="is_published_emp"
-                checked={blogForm.is_published}
-                onChange={(e) => setBlogForm({ ...blogForm, is_published: e.target.checked })}
-                className="w-4 h-4 rounded border-border"
-              />
-              <label htmlFor="is_published_emp" className="text-sm font-medium text-foreground">
-                نشر المقال
-              </label>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setIsBlogModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors"
-            >
-              إلغاء
-            </button>
-            <button
-              onClick={handleSaveBlog}
-              disabled={!blogForm.title || !blogForm.content}
-              className="btn-primary disabled:opacity-50"
-            >
-              {editingBlog ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div >
+    </div>
   );
 };
 

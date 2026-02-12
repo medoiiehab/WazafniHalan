@@ -122,7 +122,7 @@ const JobDetails = () => {
         <div className="flex flex-col lg:flex-row gap-8 justify-center">
           <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
             {/* Breadcrumb relocated */}
-            <nav className="flex items-center gap-2 text-sm text-muted-foreground/80 mb-6 bg-card/50 backdrop-blur-sm p-3 rounded-lg inline-flex shadow-sm">
+            <nav className="flex items-center gap-2 text-sm text-foreground/80 mb-6 bg-card/50 backdrop-blur-sm p-3 rounded-lg inline-flex shadow-sm">
               <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
               <ArrowRight className="w-4 h-4" />
               <Link to="/all-jobs" className="hover:text-primary transition-colors">الوظائف</Link>
@@ -135,8 +135,9 @@ const JobDetails = () => {
               <div className="px-4 py-6 border-b border-border/50">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-bold mb-1">تفاصيل الوظيفة</h2>
-                    <p className="text-muted-foreground text-sm">اقرأ الوصف والمتطلبات بعناية قبل التقديم</p>
+                    <h1 className="text-xl font-bold mb-1 text-primary">{job.title}</h1>
+                     <h3 className="text-xl mb-1 text-foreground">تفاصيل الوظيفة</h3>
+                    <p className="text-foreground text-sm">اقرأ الوصف والمتطلبات بعناية قبل التقديم</p>
                   </div>
                   {job.salary && (
                     <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-4 py-2 rounded-xl flex items-center gap-2 font-bold border border-green-200 dark:border-green-800">
@@ -151,7 +152,7 @@ const JobDetails = () => {
                 <section>
                   <h2 className="text-xl font-bold text-foreground mb-3">وصف الوظيفة</h2>
                   <div
-                    className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
+                    className="text-foreground leading-relaxed prose prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: job.description }}
                   />
                 </section>
@@ -166,7 +167,7 @@ const JobDetails = () => {
                     <h2 className="text-xl font-bold text-foreground mb-3">المتطلبات</h2>
                     <ul className="space-y-2">
                       {job.requirements.map((req, index) => (
-                        <li key={index} className="flex items-start gap-2 text-muted-foreground">
+                        <li key={index} className="flex items-start gap-2 text-foreground">
                           <span className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                           {req}
                         </li>

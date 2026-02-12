@@ -161,17 +161,21 @@ export const useDailyAnalytics = (days: number = 7) => {
     refetchInterval: 15000,
     queryFn: async (): Promise<DailyAnalytics[]> => {
       const now = new Date();
-      // Calculate start date in UTC
-      const startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - days + 1));
+      // Calculate start date in UTC - get the date that is `days - 1` days ago
+      // For example, with days=7, we get data from today back to 6 days ago (7 days total)
+      const startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - (days - 1)));
 
       const { data: analytics, error } = await supabase
         .from('job_analytics')
         .select('event_type, created_at')
         .gte('created_at', startDate.toISOString());
 
-      if (error) throw error;
+      if (error) {
+        console.error('useDailyAnalytics -Error fetching job analytics:', error);
+        throw error;
+      }
 
-      // Initialize the map with UTC keys
+      // Initialize the map with all the dates we're interested in
       const dateMap = new Map<string, { views: number; clicks: number }>();
       for (let i = 0; i < days; i++) {
         const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
@@ -179,9 +183,8 @@ export const useDailyAnalytics = (days: number = 7) => {
         dateMap.set(dateKey, { views: 0, clicks: 0 });
       }
 
+      // Aggregate events by date
       (analytics || []).forEach(a => {
-        // Direct string extraction to avoid timezone shifts
-        // a.created_at is typically "YYYY-MM-DD HH:MM..."
         const dateStr = a.created_at.substring(0, 10);
         const existing = dateMap.get(dateStr);
         if (existing) {
@@ -190,6 +193,7 @@ export const useDailyAnalytics = (days: number = 7) => {
         }
       });
 
+      // Return results sorted by date (ascending)
       return Array.from(dateMap.entries())
         .map(([date, data]) => ({ date, views: data.views, clicks: data.clicks }))
         .sort((a, b) => a.date.localeCompare(b.date));

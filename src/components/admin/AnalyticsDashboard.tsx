@@ -252,7 +252,7 @@ const AnalyticsDashboard = ({
             <div className="flex items-center justify-center py-20">
                 <div className="text-center">
                     <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-                    <p className="text-muted-foreground text-lg">جارٍ تحميل الإحصائيات...</p>
+                    <p className="text-foreground text-lg font-bold">جارٍ تحميل الإحصائيات...</p>
                 </div>
             </div>
         );
@@ -264,7 +264,7 @@ const AnalyticsDashboard = ({
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl lg:text-3xl font-bold text-foreground">لوحة التحكم</h1>
-                    <p className="text-muted-foreground mt-1">نظرة شاملة على أداء الموقع والإحصائيات</p>
+                    <p className="text-foreground mt-1 font-medium">نظرة شاملة على أداء الموقع والإحصائيات</p>
                 </div>
                 <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">
                     <Activity className="w-4 h-4" />
@@ -293,7 +293,7 @@ const AnalyticsDashboard = ({
                         <p className="text-3xl lg:text-4xl font-bold text-foreground mb-1">
                             <AnimatedNumber value={jobs.length} />
                         </p>
-                        <p className="text-sm text-muted-foreground">إجمالي الوظائف</p>
+                        <p className="text-sm text-foreground font-semibold">إجمالي الوظائف</p>
                     </div>
                 </div>
 
@@ -312,7 +312,7 @@ const AnalyticsDashboard = ({
                         <p className="text-3xl lg:text-4xl font-bold text-foreground mb-1">
                             <AnimatedNumber value={blogPosts.length} />
                         </p>
-                        <p className="text-sm text-muted-foreground">مقالات المدونة</p>
+                        <p className="text-sm text-foreground font-semibold">مقالات المدونة</p>
                     </div>
                 </div>
 
@@ -332,7 +332,7 @@ const AnalyticsDashboard = ({
                         <p className="text-3xl lg:text-4xl font-bold text-foreground mb-1">
                             <AnimatedNumber value={analyticsSummary?.total_views || 0} />
                         </p>
-                        <p className="text-sm text-muted-foreground">إجمالي المشاهدات</p>
+                        <p className="text-sm text-foreground font-semibold">إجمالي المشاهدات</p>
                     </div>
                 </div>
 
@@ -352,7 +352,7 @@ const AnalyticsDashboard = ({
                         <p className="text-3xl lg:text-4xl font-bold text-foreground mb-1">
                             <AnimatedNumber value={analyticsSummary?.total_clicks || 0} />
                         </p>
-                        <p className="text-sm text-muted-foreground">نقرات التقديم</p>
+                        <p className="text-sm text-foreground font-semibold">نقرات التقديم</p>
                     </div>
                 </div>
             </div>
@@ -367,7 +367,7 @@ const AnalyticsDashboard = ({
                         </div>
                         <div>
                             <h3 className="text-base font-bold text-foreground">إحصائيات اليوم</h3>
-                            <p className="text-xs text-muted-foreground">أداء اليوم الحالي</p>
+                            <p className="text-xs text-foreground font-bold">أداء اليوم الحالي</p>
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
@@ -557,7 +557,7 @@ const AnalyticsDashboard = ({
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-foreground">ملخص الأسبوع</h3>
-                                <p className="text-xs text-muted-foreground">تفاصيل الأداء</p>
+                                <p className="text-xs text-foreground font-semibold">تفاصيل الأداء</p>
                             </div>
                         </div>
 
@@ -627,7 +627,7 @@ const AnalyticsDashboard = ({
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-foreground">توزيع حسب الدولة</h2>
-                            <p className="text-xs text-muted-foreground">المشاهدات والنقرات لكل دولة</p>
+                            <p className="text-xs text-foreground font-semibold">المشاهدات والنقرات لكل دولة</p>
                         </div>
                     </div>
 
@@ -639,7 +639,7 @@ const AnalyticsDashboard = ({
                         <div className="grid grid-cols-2 gap-2">
                             {/* Views Pie */}
                             <div>
-                                <p className="text-sm font-medium text-center text-muted-foreground mb-2">المشاهدات</p>
+                                <p className="text-sm font-bold text-center text-foreground mb-2">المشاهدات</p>
                                 <div className="h-[200px]" dir="ltr">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <PieChart>
@@ -674,7 +674,7 @@ const AnalyticsDashboard = ({
 
                             {/* Clicks Pie */}
                             <div>
-                                <p className="text-sm font-medium text-center text-muted-foreground mb-2">النقرات</p>
+                                <p className="text-sm font-bold text-center text-foreground mb-2">النقرات</p>
                                 <div className="h-[200px]" dir="ltr">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <PieChart>
@@ -731,7 +731,7 @@ const AnalyticsDashboard = ({
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-foreground">إحصائيات حسب الدولة</h2>
-                            <p className="text-xs text-muted-foreground">تفاصيل الأداء لكل دولة</p>
+                            <p className="text-xs text-foreground font-bold">تفاصيل الأداء لكل دولة</p>
                         </div>
                     </div>
 
@@ -739,11 +739,11 @@ const AnalyticsDashboard = ({
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-border">
-                                    <th className="text-right py-3 px-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider">الدولة</th>
-                                    <th className="text-right py-3 px-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider">الوظائف</th>
-                                    <th className="text-right py-3 px-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider">المشاهدات</th>
-                                    <th className="text-right py-3 px-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider">النقرات</th>
-                                    <th className="text-right py-3 px-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider">التحويل</th>
+                                    <th className="text-right py-3 px-3 font-bold text-sm text-foreground uppercase tracking-wider">الدولة</th>
+                                    <th className="text-right py-3 px-3 font-bold text-sm text-foreground uppercase tracking-wider">الوظائف</th>
+                                    <th className="text-right py-3 px-3 font-bold text-sm text-foreground uppercase tracking-wider">المشاهدات</th>
+                                    <th className="text-right py-3 px-3 font-bold text-sm text-foreground uppercase tracking-wider">النقرات</th>
+                                    <th className="text-right py-3 px-3 font-bold text-sm text-foreground uppercase tracking-wider">التحويل</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -814,7 +814,7 @@ const AnalyticsDashboard = ({
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-foreground">حالة المحتوى</h2>
-                            <p className="text-xs text-muted-foreground">الوظائف والمقالات: منشور و مسودة</p>
+                            <p className="text-xs text-foreground font-semibold">الوظائف والمقالات: منشور و مسودة</p>
                         </div>
                     </div>
                     <div className="h-[250px]" dir="ltr">
@@ -912,7 +912,7 @@ const AnalyticsDashboard = ({
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-foreground">أكثر الوظائف مشاهدة</h2>
-                            <p className="text-xs text-muted-foreground">الوظائف الأعلى أداءً</p>
+                            <p className="text-xs text-foreground font-semibold">الوظائف الأعلى أداءً</p>
                         </div>
                     </div>
                     <div className="space-y-3">
@@ -955,7 +955,7 @@ const AnalyticsDashboard = ({
                             );
                         })}
                         {jobsAnalytics.length === 0 && (
-                            <p className="text-center text-muted-foreground py-8">لا توجد بيانات بعد</p>
+                            <p className="text-center text-foreground py-8 font-bold">لا توجد بيانات بعد</p>
                         )}
                     </div>
                 </div>
@@ -968,7 +968,7 @@ const AnalyticsDashboard = ({
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-foreground">آخر الوظائف المضافة</h2>
-                            <p className="text-xs text-muted-foreground">أحدث الوظائف على المنصة</p>
+                            <p className="text-xs text-foreground font-semibold">أحدث الوظائف على المنصة</p>
                         </div>
                     </div>
                     {isLoadingJobs ? (
@@ -1004,7 +1004,7 @@ const AnalyticsDashboard = ({
                                 </div>
                             ))}
                             {jobs.length === 0 && (
-                                <p className="text-center text-muted-foreground py-8">لا توجد وظائف بعد</p>
+                                <p className="text-center text-foreground py-8 font-bold">لا توجد وظائف بعد</p>
                             )}
                         </div>
                     )}
@@ -1019,7 +1019,7 @@ const AnalyticsDashboard = ({
                     </div>
                     <div>
                         <h2 className="text-lg font-bold text-foreground">نظرة سريعة</h2>
-                        <p className="text-xs text-muted-foreground">ملخص عام للمنصة</p>
+                        <p className="text-xs text-foreground font-bold">ملخص عام للمنصة</p>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">

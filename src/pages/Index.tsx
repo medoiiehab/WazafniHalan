@@ -123,7 +123,7 @@ const Index = () => {
                   placeholder="مسمى الوظيفة، كلمات مفتاحية (مثل: محاسب، مهندس...)"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white text-foreground pr-12 pl-4 py-3 md:py-4 rounded-xl border-none focus:ring-2 focus:ring-blue-400 text-base md:text-lg transition-all placeholder:text-muted-foreground/60"
+                  className="w-full bg-white text-foreground pr-12 pl-4 py-3 md:py-4 rounded-xl border-none focus:ring-2 focus:ring-blue-400 text-base md:text-lg transition-all placeholder:text-foreground/60"
                 />
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-primary" />
               </div>
@@ -153,28 +153,28 @@ const Index = () => {
               <Briefcase className="w-5 h-5 md:w-6 md:h-6" />
               <span className="text-xl md:text-2xl font-bold">{allJobs.length}+</span>
             </div>
-            <p className="text-sm text-muted-foreground font-medium">وظيفة شاغرة</p>
+            <p className="text-sm text-foreground font-medium">وظيفة شاغرة</p>
           </div>
           <div className="space-y-1 border-r border-border md:border-none lg:border-r">
             <div className="flex items-center justify-center gap-2 text-primary">
               <Globe className="w-5 h-5 md:w-6 md:h-6" />
               <span className="text-xl md:text-2xl font-bold">٧</span>
             </div>
-            <p className="text-sm text-muted-foreground font-medium">دول عربية</p>
+            <p className="text-sm text-foreground font-medium">دول عربية</p>
           </div>
           <div className="space-y-1 border-t border-border pt-4 md:border-t-0 md:pt-0 lg:border-r">
             <div className="flex items-center justify-center gap-2 text-primary">
               <Users className="w-5 h-5 md:w-6 md:h-6" />
               <span className="text-xl md:text-2xl font-bold">٥٠ ألف+</span>
             </div>
-            <p className="text-sm text-muted-foreground font-medium">باحث عن عمل</p>
+            <p className="text-sm text-foreground font-medium">باحث عن عمل</p>
           </div>
           <div className="space-y-1 border-t border-border pt-4 md:border-t-0 md:pt-0 lg:border-r">
             <div className="flex items-center justify-center gap-2 text-primary">
               <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6" />
               <span className="text-xl md:text-2xl font-bold">٩٩٪</span>
             </div>
-            <p className="text-sm text-muted-foreground font-medium">تحديث يومي</p>
+            <p className="text-sm text-foreground font-medium">تحديث يومي</p>
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ const Index = () => {
               </h2>
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                className="text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1"
               >
                 مسح البحث
               </button>
@@ -198,7 +198,7 @@ const Index = () => {
             {isSearchLoading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                <p className="text-muted-foreground animate-pulse">جاري البحث عن أفضل الفرص...</p>
+                <p className="text-foreground animate-pulse">جاري البحث عن أفضل الفرص...</p>
               </div>
             ) : searchResults.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -208,11 +208,11 @@ const Index = () => {
               </div>
             ) : (
               <div className="text-center py-20">
-                <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
+                <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-foreground">
                   <Search className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">عذراً، لم نجد نتائج لـ "{searchTerm}"</h3>
-                <p className="text-muted-foreground">جرب كلمات مفتاحية أخرى أو تصفح الوظائف حسب الدولة.</p>
+                <p className="text-foreground">جرب كلمات مفتاحية أخرى أو تصفح الوظائف حسب الدولة.</p>
               </div>
             )}
           </div>
@@ -233,7 +233,7 @@ const Index = () => {
                 <div className="flex items-center justify-between mb-10">
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold mb-2">الوظائف المميزة</h2>
-                    <p className="text-muted-foreground">فرص عمل مختارة بعناية لأجلك</p>
+                    <p className="text-foreground">فرص عمل مختارة بعناية لأجلك</p>
                   </div>
                   <Link to="/all-jobs" className="text-primary font-bold hover:underline flex items-center gap-1">
                     عرض الكل <ArrowRight className="w-4 h-4 rotate-180" />
@@ -248,7 +248,7 @@ const Index = () => {
               <div className="text-center mb-12">
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">تصفح الوظائف حسب الدولة</h2>
                 <div className="h-1.5 w-20 bg-primary mx-auto rounded-full mb-4"></div>
-                <p className="text-muted-foreground max-w-xl mx-auto">اختر وجهتك المفضلة واستكشف آلاف الفرص الوظيفية في كل بلد</p>
+                <p className="text-foreground max-w-xl mx-auto">اختر وجهتك المفضلة واستكشف آلاف الفرص الوظيفية في كل بلد</p>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-6">
@@ -289,7 +289,7 @@ const Index = () => {
                       : `أحدث الوظائف في ${countriesWithJobCount.find(c => c.slug === selectedCountry)?.name}`
                     }
                   </h2>
-                  <p className="text-muted-foreground">كن أول المتقدمين للوظائف الجديدة في منطقتك</p>
+                  <p className="text-foreground">كن أول المتقدمين للوظائف الجديدة في منطقتك</p>
                 </div>
 
                 {selectedCountry !== 'all' && (
@@ -327,11 +327,11 @@ const Index = () => {
                 </>
               ) : (
                 <div className="bg-card rounded-2xl border border-border p-20 text-center">
-                  <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
+                  <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-foreground">
                     <MapPin className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-bold mb-2">لا توجد وظائف حالياً في هذا القسم</h3>
-                  <p className="text-muted-foreground mb-6">برجاء اختيار دولة أخرى أو العودة لاحقاً.</p>
+                  <p className="text-foreground mb-6">برجاء اختيار دولة أخرى أو العودة لاحقاً.</p>
                   <button onClick={() => setSelectedCountry('all')} className="btn-primary">عرض جميع الوظائف</button>
                 </div>
               )}
@@ -341,7 +341,7 @@ const Index = () => {
             <section className="bg-secondary/30 rounded-3xl p-8 md:p-16 mb-16 md:mb-24">
               <div className="text-center mb-12">
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">كيف تجد وظيفتك معنا؟</h2>
-                <p className="text-muted-foreground">٣ خطوات بسيطة تفصلك عن حلمك الوظيفي القادم</p>
+                <p className="text-foreground">٣ خطوات بسيطة تفصلك عن حلمك الوظيفي القادم</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                 <div className="text-center group">
@@ -349,21 +349,21 @@ const Index = () => {
                     <Search className="w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-bold mb-3">١. ابحث</h3>
-                  <p className="text-muted-foreground leading-relaxed">استخدم محرك البحث الذكي للعثور على الوظائف التي تناسب مهاراتك.</p>
+                  <p className="text-foreground leading-relaxed">استخدم محرك البحث الذكي للعثور على الوظائف التي تناسب مهاراتك.</p>
                 </div>
                 <div className="text-center group">
                   <div className="w-16 h-16 bg-white border border-border shadow-sm rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:text-white transition-all transform group-hover:-rotate-6">
                     <Briefcase className="w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-bold mb-3">٢. اختر</h3>
-                  <p className="text-muted-foreground leading-relaxed">تصفح التفاصيل وقم باختيار الوظائف التي تطمح بالانضمام إليها.</p>
+                  <p className="text-foreground leading-relaxed">تصفح التفاصيل وقم باختيار الوظائف التي تطمح بالانضمام إليها.</p>
                 </div>
                 <div className="text-center group">
                   <div className="w-16 h-16 bg-white border border-border shadow-sm rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:text-white transition-all transform group-hover:rotate-6">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-bold mb-3">٣. قدم</h3>
-                  <p className="text-muted-foreground leading-relaxed">قدم طلبك مباشرة عبر الروابط الرسمية لكل شركة أو معلن.</p>
+                  <p className="text-foreground leading-relaxed">قدم طلبك مباشرة عبر الروابط الرسمية لكل شركة أو معلن.</p>
                 </div>
               </div>
             </section>

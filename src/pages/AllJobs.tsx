@@ -158,7 +158,7 @@ const AllJobs = () => {
                 <div className="container-custom py-24 text-center">
                     <div className="bg-destructive/10 border border-destructive rounded-xl p-8 max-w-md mx-auto">
                         <h2 className="text-xl font-bold text-destructive mb-2">خطأ في تحميل البيانات</h2>
-                        <p className="text-muted-foreground">تعذر تحميل الوظائف. يرجى المحاولة مرة أخرى.</p>
+                        <p className="text-foreground">تعذر تحميل الوظائف. يرجى المحاولة مرة أخرى.</p>
                         <button
                             onClick={() => window.location.reload()}
                             className="btn-primary mt-4"
@@ -201,7 +201,7 @@ const AllJobs = () => {
                                 placeholder="ابحث عن الوظائف"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-white text-foreground pr-12 pl-4 py-3 md:py-4 rounded-xl border-none focus:ring-2 focus:ring-blue-400 text-base md:text-lg transition-all placeholder:text-muted-foreground/60"
+                                className="w-full bg-white text-foreground pr-12 pl-4 py-3 md:py-4 rounded-xl border-none focus:ring-2 focus:ring-blue-400 text-base md:text-lg transition-all placeholder:text-foreground/60"
                             />
                             <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-primary" />
                         </div>
@@ -273,7 +273,7 @@ const AllJobs = () => {
                                             />
                                             <span className="text-foreground">جميع الدول</span>
                                         </div>
-                                        <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                        <span className="text-sm text-foreground bg-accent px-2 py-1 rounded">
                                             {allJobs.length}
                                         </span>
                                     </label>
@@ -292,7 +292,7 @@ const AllJobs = () => {
                                                 <span className="text-xl">{country.flag}</span>
                                                 <span className="text-foreground">{country.name}</span>
                                             </div>
-                                            <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                            <span className="text-sm text-foreground bg-accent px-2 py-1 rounded">
                                                 {country.jobCount}
                                             </span>
                                         </label>
@@ -321,7 +321,7 @@ const AllJobs = () => {
                                                 />
                                                 <span className="text-foreground">{item.company}</span>
                                             </div>
-                                            <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                            <span className="text-sm text-foreground bg-accent px-2 py-1 rounded">
                                                 {item.jobCount}
                                             </span>
                                         </label>
@@ -468,7 +468,7 @@ const AllJobs = () => {
                                                         {job.title}
                                                     </h3>
 
-                                                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                                                    <div className="flex items-center gap-3 text-sm text-foreground mb-3">
                                                         {job.company && (
                                                             <span className="flex items-center gap-1">
                                                                 <Building2 className="w-4 h-4" />
@@ -501,12 +501,12 @@ const AllJobs = () => {
                             ) : (
                                 <div className="text-center py-12 bg-card rounded-xl border border-border">
                                     <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Search className="w-8 h-8 text-muted-foreground" />
+                                        <Search className="w-8 h-8 text-foreground" />
                                     </div>
                                     <h3 className="text-lg font-medium text-foreground mb-2">
                                         لا توجد نتائج
                                     </h3>
-                                    <p className="text-muted-foreground mb-4">
+                                    <p className="text-foreground mb-4">
                                         لم نتمكن من العثور على وظائف تطابق معايير البحث
                                     </p>
                                     <button
@@ -563,7 +563,7 @@ const AllJobs = () => {
                                                 />
                                                 <span className="text-foreground">جميع الدول</span>
                                             </div>
-                                            <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                            <span className="text-sm text-foreground bg-accent px-2 py-1 rounded">
                                                 {allJobs.length}
                                             </span>
                                         </label>
@@ -582,7 +582,7 @@ const AllJobs = () => {
                                                     <span className="text-xl">{country.flag}</span>
                                                     <span className="text-foreground">{country.name}</span>
                                                 </div>
-                                                <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                                <span className="text-sm text-foreground bg-accent px-2 py-1 rounded">
                                                     {country.jobCount}
                                                 </span>
                                             </label>
@@ -611,7 +611,7 @@ const AllJobs = () => {
                                                     />
                                                     <span className="text-foreground">{item.company}</span>
                                                 </div>
-                                                <span className="text-sm text-muted-foreground bg-accent px-2 py-1 rounded">
+                                                <span className="text-sm text-foreground bg-accent px-2 py-1 rounded">
                                                     {item.jobCount}
                                                 </span>
                                             </label>

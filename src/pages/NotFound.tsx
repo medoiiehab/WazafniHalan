@@ -17,7 +17,7 @@ const NotFound = () => {
         <div className="max-w-lg mx-auto text-center">
           <div className="text-8xl font-bold text-primary mb-4">404</div>
           <h1 className="text-2xl font-bold text-foreground mb-4">الصفحة غير موجودة</h1>
-          <p className="text-muted-foreground mb-8">
+          <p className="text-foreground mb-8">
             عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها إلى عنوان آخر.
           </p>
 

@@ -18,7 +18,7 @@ const CountryCard = ({ country }: CountryCardProps) => {
           <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
             وظائف {country.name}
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground font-semibold">
             {country.jobCount} وظيفة متاحة
           </p>
         </div>

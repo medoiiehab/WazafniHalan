@@ -47,9 +47,9 @@ const App = () => (
               }
             />
             <Route
-              path="/admin/editor/:type/:id?"
+              path="/editor/:type/:id?"
               element={
-                <ProtectedRoute requireAdmin>
+                <ProtectedRoute requireEmployee>
                   <ContentEditor />
                 </ProtectedRoute>
               }

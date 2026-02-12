@@ -80,7 +80,7 @@ const CountryJobs = () => {
         <div className="container-custom py-24 flex justify-center items-center min-h-screen">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-lg text-muted-foreground">جاري تحميل الوظائف...</p>
+            <p className="text-lg text-foreground">جاري تحميل الوظائف...</p>
           </div>
         </div>
       </Layout>
@@ -136,8 +136,8 @@ const CountryJobs = () => {
             <Link to="/" className="text-primary hover:underline flex items-center gap-1">
               الرئيسية
             </Link>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">وظائف {country.name}</span>
+            <ChevronRight className="w-4 h-4 text-foreground" />
+            <span className="text-foreground">وظائف {country.name}</span>
           </nav>
         </div>
       </div>
@@ -169,7 +169,7 @@ const CountryJobs = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="input-field text-foreground pr-10"
                 />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
               </div>
               <button className="btn-primary whitespace-nowrap">
                 بحث
@@ -206,7 +206,7 @@ const CountryJobs = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-muted-foreground py-8">
+              <p className="text-center text-foreground py-8">
                 لا توجد نتائج مطابقة لبحثك في {country.name}
               </p>
             )}
@@ -268,7 +268,7 @@ const CountryJobs = () => {
                   </>
                 ) : (
                   <div className="text-center py-12 bg-card rounded-xl border border-border">
-                    <p className="text-muted-foreground text-lg mb-4">
+                    <p className="text-foreground text-lg mb-4">
                       لا توجد وظائف متاحة حالياً في {country.name}
                     </p>
                     <Link to="/" className="btn-primary inline-block">
@@ -302,7 +302,7 @@ const CountryJobs = () => {
                             <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                               وظائف {otherCountry.name}
                             </h3>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-foreground">
                               استكشف الوظائف المتاحة
                             </p>
                           </div>

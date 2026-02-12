@@ -13,16 +13,16 @@ const StaticPages = () => {
       title: 'من نحن',
       content: (
         <div className="prose max-w-none">
-          <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+          <p className="text-lg text-foreground leading-relaxed mb-6">
             وظفني حالاً هي منصة رائدة للبحث عن الوظائف في دول الخليج العربي ومصر. نهدف إلى ربط
             الباحثين عن عمل بأفضل الفرص الوظيفية في المنطقة.
           </p>
           <h2 className="text-xl font-bold text-foreground mb-4">رؤيتنا</h2>
-          <p className="text-muted-foreground leading-relaxed mb-6">
+          <p className="text-foreground leading-relaxed mb-6">
             أن نكون المنصة الأولى والأكثر موثوقية للبحث عن الوظائف في منطقة الخليج العربي.
           </p>
           <h2 className="text-xl font-bold text-foreground mb-4">رسالتنا</h2>
-          <p className="text-muted-foreground leading-relaxed">
+          <p className="text-foreground leading-relaxed">
             تسهيل عملية البحث عن الوظائف وتوفير فرص عمل متميزة للباحثين عن عمل في مختلف
             المجالات والتخصصات.
           </p>
@@ -32,7 +32,7 @@ const StaticPages = () => {
     '/privacy': {
       title: 'سياسة الخصوصية',
       content: (
-        <div className="prose max-w-none text-muted-foreground">
+        <div className="prose max-w-none text-foreground">
           <p className="mb-4">
             نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. توضح هذه السياسة كيفية جمع
             واستخدام وحماية معلوماتك.
@@ -55,7 +55,7 @@ const StaticPages = () => {
     '/terms': {
       title: 'الشروط والأحكام',
       content: (
-        <div className="prose max-w-none text-muted-foreground">
+        <div className="prose max-w-none text-foreground">
           <h2 className="text-xl font-bold text-foreground mb-4">الشروط والأحكام – موقع وظفني حالاً</h2>
           <p className="mb-4 leading-relaxed">
             إن استخدامكم لموقع وظفني حالاً يعني موافقتكم الكاملة على جميع الشروط والأحكام والسياسات الموضحة أدناه، والتي تُعتبر سارية ابتداءً من لحظة دخولكم أو استخدامكم للموقع. ويحتفظ موقع وظفني حالاً بالحق في تعديل أو تحديث الشروط والأحكام في أي وقت يراه مناسباً.

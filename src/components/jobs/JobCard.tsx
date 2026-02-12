@@ -63,7 +63,7 @@ const JobCard = ({ job }: JobCardProps) => {
             {job.title}
           </h3>
 
-          <div className="flex flex-col gap-2 text-sm text-muted-foreground mb-4">
+          <div className="flex flex-col gap-2 text-sm text-foreground font-medium mb-4">
             {job.company && (
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-md bg-secondary flex items-center justify-center">
@@ -83,11 +83,11 @@ const JobCard = ({ job }: JobCardProps) => {
           <div className="mt-auto border-t border-border pt-4 flex items-center justify-between">
             {job.salary ? (
               <div className="flex flex-col">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold">الراتب المتوقع</span>
+                <span className="text-[10px] text-foreground font-bold uppercase">الراتب المتوقع</span>
                 <span className="text-sm font-bold text-primary">{job.salary}</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+              <div className="flex items-center gap-1 text-[11px] font-bold text-foreground">
                 <Timer className="w-3.5 h-3.5" />
                 <span>تم النشر حديثاً</span>
               </div>

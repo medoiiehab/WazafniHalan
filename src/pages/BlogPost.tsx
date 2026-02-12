@@ -61,7 +61,7 @@ const BlogPost = () => {
       </PageHeader>
 
       <div className="container-custom py-8">
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6 justify-center">
+        <nav className="flex items-center gap-2 text-sm text-foreground mb-6 justify-center">
           <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
           <ArrowRight className="w-4 h-4" />
           <Link to="/blog" className="hover:text-primary transition-colors">المدونة</Link>
@@ -89,7 +89,7 @@ const BlogPost = () => {
               <div className="p-6 md:p-10">
                 <h2 className="section-title">{post.title}</h2>
                 <div
-                  className="prose prose-lg max-w-none text-muted-foreground leading-relaxed dark:prose-invert 
+                  className="prose prose-lg max-w-none text-foreground leading-relaxed dark:prose-invert 
                   prose-headings:text-foreground prose-a:text-primary prose-strong:text-foreground
                   prose-img:rounded-xl prose-img:w-full prose-img:object-cover"
                   dangerouslySetInnerHTML={{ __html: post.content }}
@@ -110,7 +110,7 @@ const BlogPost = () => {
                   {relatedPosts.map((relatedPost) => (
                     <Link key={relatedPost.id} to={`/blog/${relatedPost.slug}`} className="job-card block group">
                       <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">{relatedPost.title}</h3>
-                      {relatedPost.excerpt && <p className="text-sm text-muted-foreground line-clamp-2">{relatedPost.excerpt}</p>}
+                      {relatedPost.excerpt && <p className="text-sm text-foreground line-clamp-2">{relatedPost.excerpt}</p>}
                     </Link>
                   ))}
                 </div>

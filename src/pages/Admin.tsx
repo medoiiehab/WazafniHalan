@@ -207,17 +207,17 @@ const Admin = () => {
 
   const openJobModal = (job?: Job) => {
     if (job) {
-      navigate(`/admin/editor/job/${job.id}`);
+      navigate(`/editor/job/${job.id}`);
     } else {
-      navigate("/admin/editor/job");
+      navigate("/editor/job");
     }
   };
 
   const openBlogModal = (blog?: BlogPost) => {
     if (blog) {
-      navigate(`/admin/editor/blog/${blog.id}`);
+      navigate(`/editor/blog/${blog.id}`);
     } else {
-      navigate("/admin/editor/blog");
+      navigate("/editor/blog");
     }
   };
 
@@ -455,7 +455,7 @@ const Admin = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-right ${activeTab === tab.id
                 ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                : "text-foreground hover:bg-accent hover:text-foreground"
                 }`}
             >
               <tab.icon className="w-5 h-5" />
@@ -468,7 +468,7 @@ const Admin = () => {
       <div className={mobile ? "mt-auto py-6 border-t border-border" : "absolute bottom-0 right-0 left-0 p-6 border-t border-border"}>
         <a
           href="/"
-          className="flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center justify-center gap-2 text-foreground hover:text-foreground transition-colors"
         >
           العودة للموقع
         </a>
@@ -552,7 +552,7 @@ const Admin = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="input-field pr-10"
                     />
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
                   </div>
                   <div className="flex items-center gap-2">
                     <select
@@ -576,13 +576,13 @@ const Admin = () => {
                     <table className="w-full">
                       <thead className="bg-muted">
                         <tr>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">العنوان</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الشركة</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الدولة</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الوسم</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">المحرر</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">التاريخ</th>
-                          <th className="text-right py-3 px-4 font-medium text-muted-foreground">الإجراءات</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">العنوان</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الشركة</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الدولة</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الوسم</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">المحرر</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">التاريخ</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">الإجراءات</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -596,13 +596,13 @@ const Admin = () => {
                                 </span>
                               )}
                               {!job.is_published && (
-                                <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">
+                                <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-foreground text-xs">
                                   مسودة
                                 </span>
                               )}
                             </td>
-                            <td className="py-3 px-4 text-muted-foreground">{job.company}</td>
-                            <td className="py-3 px-4 text-muted-foreground">{job.country}</td>
+                            <td className="py-3 px-4 text-foreground font-medium">{job.company}</td>
+                            <td className="py-3 px-4 text-foreground font-medium">{job.country}</td>
                             <td className="py-3 px-4">
                               {job.exclusive_tag && job.exclusive_tag !== "none" && (
                                 <span className="px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-xs">
@@ -610,28 +610,28 @@ const Admin = () => {
                                 </span>
                               )}
                             </td>
-                            <td className="py-3 px-4 text-muted-foreground text-sm">
+                            <td className="py-3 px-4 text-foreground text-sm font-medium">
                               {job.editor ? (
                                 <div className="flex flex-col gap-1">
-                                  <span className="font-medium text-foreground">{editorInfo[job.editor] || "جاري التحميل..."}</span>
-                                  <span className="text-xs opacity-75">{job.editor.slice(0, 8)}...</span>
+                                  <span className="font-bold text-foreground">{editorInfo[job.editor] || "جاري التحميل..."}</span>
+                                  <span className="text-xs text-foreground opacity-90 font-medium">{job.editor.slice(0, 8)}...</span>
                                 </div>
                               ) : (
-                                <span className="text-muted-foreground">غير محدد</span>
+                                <span className="text-foreground">غير محدد</span>
                               )}
                             </td>
-                            <td className="py-3 px-4 text-muted-foreground">{formatDate(job.created_at)}</td>
+                            <td className="py-3 px-4 text-foreground font-medium">{formatDate(job.created_at)}</td>
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => openJobModal(job)}
-                                  className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                                  className="p-2 rounded-lg hover:bg-accent transition-colors text-foreground hover:text-foreground"
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteJob(job.id)}
-                                  className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                                  className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -671,10 +671,10 @@ const Admin = () => {
                     >
                       <div>
                         <h3 className="font-bold text-foreground mb-1">{post.title}</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-foreground font-medium">
                           {post.author} • {formatDate(post.created_at)}
                           {!post.is_published && (
-                            <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">
+                            <span className="mr-2 px-2 py-0.5 rounded-full bg-muted text-foreground text-xs">
                               مسودة
                             </span>
                           )}
@@ -683,13 +683,13 @@ const Admin = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openBlogModal(post)}
-                          className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                          className="p-2 rounded-lg hover:bg-accent transition-colors text-foreground hover:text-foreground"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteBlog(post.id)}
-                          className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                          className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -717,7 +717,7 @@ const Admin = () => {
                       onKeyDown={(e) => e.key === 'Enter' && handleSearchUsers()}
                       className="input-field pr-10"
                     />
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
                   </div>
                   <button onClick={() => handleSearchUsers()} disabled={isSearchingUsers} className="btn-primary">
                     {isSearchingUsers ? <Loader2 className="w-4 h-4 animate-spin" /> : "بحث"}
@@ -731,7 +731,7 @@ const Admin = () => {
                       <div key={u.user_id} className="flex items-center justify-between p-4 bg-muted rounded-lg">
                         <div>
                           <p className="font-medium text-foreground">{u.email}</p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-foreground font-medium">
                             انضم: {new Date(u.created_at).toLocaleDateString("ar-SA")}
                           </p>
                           <div className="flex gap-2 mt-2">
@@ -772,7 +772,7 @@ const Admin = () => {
 
 
                 {searchedUsers.length === 0 && !isSearchingUsers && (
-                  <p className="text-center text-muted-foreground py-4">
+                  <p className="text-center text-foreground py-4">
                     {userSearchTerm ? "لم يتم العثور على مستخدمين" : "لا يوجد مستخدمين لعرضهم"}
                   </p>
                 )}
@@ -798,7 +798,7 @@ const Admin = () => {
                       className="input-field"
                       placeholder="pub-xxxxxxxxxxxxxxxx"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-foreground mt-1">
                       يمكنك العثور عليه في حساب AdSense الخاص بك
                     </p>
                   </div>
@@ -854,19 +854,19 @@ const Admin = () => {
                   <table className="w-full">
                     <thead className="bg-muted">
                       <tr>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">الاسم</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">معرف الوحدة (Slot ID)</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">المكان</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">الحالة</th>
-                        <th className="text-right py-3 px-4 font-medium text-muted-foreground">الإجراءات</th>
+                        <th className="text-right py-3 px-4 font-medium text-foreground">الاسم</th>
+                        <th className="text-right py-3 px-4 font-medium text-foreground">معرف الوحدة (Slot ID)</th>
+                        <th className="text-right py-3 px-4 font-medium text-foreground">المكان</th>
+                        <th className="text-right py-3 px-4 font-medium text-foreground">الحالة</th>
+                        <th className="text-right py-3 px-4 font-medium text-foreground">الإجراءات</th>
                       </tr>
                     </thead>
                     <tbody>
                       {adUnits.map((unit) => (
                         <tr key={unit.id} className="border-b border-border hover:bg-muted/50">
                           <td className="py-3 px-4 font-medium text-foreground">{unit.name}</td>
-                          <td className="py-3 px-4 text-muted-foreground">{unit.slot_id}</td>
-                          <td className="py-3 px-4 text-muted-foreground">{unit.placement}</td>
+                          <td className="py-3 px-4 text-foreground font-medium">{unit.slot_id}</td>
+                          <td className="py-3 px-4 text-foreground font-medium">{unit.placement}</td>
                           <td className="py-3 px-4">
                             {unit.is_enabled ? (
                               <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs">
@@ -882,13 +882,13 @@ const Admin = () => {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => openAdUnitModal(unit)}
-                                className="p-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                                className="p-2 rounded-lg hover:bg-accent transition-colors text-foreground hover:text-foreground"
                               >
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteAdUnit(unit.id)}
-                                className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                                className="p-2 rounded-lg hover:bg-destructive/10 transition-colors text-foreground hover:text-destructive"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -898,7 +898,7 @@ const Admin = () => {
                       ))}
                       {adUnits.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="text-center text-muted-foreground py-8">
+                          <td colSpan={5} className="text-center text-foreground py-8 font-medium">
                             لا توجد وحدات إعلانية
                           </td>
                         </tr>
@@ -924,8 +924,8 @@ const Admin = () => {
                   </div>
 
                   <div className="mb-4 p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">البريد الإلكتروني الحالي:</p>
-                    <p className="font-medium text-foreground">{user?.email}</p>
+                    <p className="text-sm text-foreground font-medium">البريد الإلكتروني الحالي:</p>
+                    <p className="font-bold text-foreground text-base">{user?.email}</p>
                   </div>
 
                   {/* Change Email */}
@@ -1018,8 +1018,8 @@ const Admin = () => {
                 <div className="bg-card rounded-xl p-6 border border-border">
                   <h2 className="text-lg font-bold text-foreground mb-4">رفع الصور</h2>
                   <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                    <Image className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-2">اسحب الصور هنا أو انقر للرفع</p>
+                    <Image className="w-12 h-12 text-foreground mx-auto mb-4" />
+                    <p className="text-foreground mb-2 font-medium">اسحب الصور هنا أو انقر للرفع</p>
                     <button className="btn-secondary">اختر ملفات</button>
                   </div>
                 </div>
@@ -1095,7 +1095,7 @@ const Admin = () => {
                   <option value="blog_post_bottom">blog_post_bottom - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
               </select>
-              <p className="text-xs text-muted-foreground mt-1">اختر المكان المناسب من القائمة (3 إعلانات فقط لكل صفحة وفقاً لسياسة Google AdSense)</p>
+              <p className="text-xs text-foreground mt-1 font-medium">اختر المكان المناسب من القائمة (3 إعلانات فقط لكل صفحة وفقاً لسياسة Google AdSense)</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

@@ -148,7 +148,7 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
           {getScoreIcon()}
           <div>
             <h3 className="font-semibold text-foreground">SEO Preview</h3>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground font-semibold">
               SEO Score: <span className="font-bold">{seoScore.score}/100</span>
             </p>
           </div>
@@ -172,7 +172,7 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
           placeholder="Enter your focus keyword (e.g., 'remote job')"
           className="w-full px-3 py-2 text-sm rounded border border-border bg-background text-foreground"
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-foreground mt-1 font-medium">
           Used in title and description for better SEO
         </p>
       </div>
@@ -231,7 +231,7 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
           <h2 className="text-foreground font-medium text-sm mb-1 line-clamp-2">
             {title || "Your page title"}
           </h2>
-          <p className="text-muted-foreground text-xs line-clamp-2">
+          <p className="text-foreground text-xs line-clamp-2 font-medium">
             {description || "Your meta description will appear here"}
           </p>
         </div>
@@ -240,15 +240,15 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
       {/* Character Count */}
       <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
         <div className="p-2 rounded bg-background border border-border">
-          <p className="text-muted-foreground mb-1">Title Length</p>
+          <p className="text-foreground mb-1 font-semibold">Title Length</p>
           <p className="font-bold text-foreground">{title.length}/60</p>
         </div>
         <div className="p-2 rounded bg-background border border-border">
-          <p className="text-muted-foreground mb-1">Meta Length</p>
+          <p className="text-foreground mb-1 font-semibold">Meta Length</p>
           <p className="font-bold text-foreground">{description.length}/160</p>
         </div>
         <div className="p-2 rounded bg-background border border-border">
-          <p className="text-muted-foreground mb-1">Score</p>
+          <p className="text-foreground mb-1 font-semibold">Score</p>
           <p className="font-bold text-foreground">{seoScore.score}%</p>
         </div>
       </div>

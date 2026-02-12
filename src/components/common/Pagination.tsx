@@ -35,7 +35,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         return (
           <div key={page} className="flex items-center gap-1">
             {showEllipsis && (
-              <span className="w-10 h-10 flex items-center justify-center text-muted-foreground">
+              <span className="w-10 h-10 flex items-center justify-center text-foreground font-bold">
                 ...
               </span>
             )}

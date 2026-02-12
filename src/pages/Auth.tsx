@@ -157,7 +157,7 @@ const Auth = () => {
               <h1 className="text-2xl font-bold text-foreground mb-2">
                 {isSignUp ? 'إنشاء حساب جديد' : 'تسجيل الدخول'}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-foreground">
                 {isSignUp ? 'أنشئ حسابك للوصول إلى الميزات الكاملة' : 'أدخل بياناتك للوصول إلى حسابك'}
               </p>
             </div>
@@ -175,7 +175,7 @@ const Auth = () => {
                     className={`input-field pr-10 ${errors.email ? 'border-destructive' : ''}`}
                     placeholder="example@email.com"
                   />
-                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
                 </div>
                 {errors.email && (
                   <p className="text-sm text-destructive mt-1">{errors.email}</p>
@@ -194,11 +194,11 @@ const Auth = () => {
                     className={`input-field pr-10 pl-10 ${errors.password ? 'border-destructive' : ''}`}
                     placeholder="••••••••"
                   />
-                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -221,7 +221,7 @@ const Auth = () => {
                       className={`input-field pr-10 ${errors.confirmPassword ? 'border-destructive' : ''}`}
                       placeholder="••••••••"
                     />
-                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground" />
                   </div>
                   {errors.confirmPassword && (
                     <p className="text-sm text-destructive mt-1">{errors.confirmPassword}</p>
@@ -258,7 +258,7 @@ const Auth = () => {
           {/* AdSense 4 - After Form */}
           <AdSense size="rectangle" className="mt-6 mx-auto" />
 
-          <p className="text-center text-muted-foreground text-sm mt-4">
+          <p className="text-center text-foreground text-sm mt-4">
             <a href="/" className="hover:text-primary transition-colors">
               ← العودة للصفحة الرئيسية
             </a>
