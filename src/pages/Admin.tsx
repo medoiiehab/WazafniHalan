@@ -78,6 +78,14 @@ const Admin = () => {
   const [userRoles, setUserRoles] = useState<Record<string, string[]>>({});
   const [isSearchingUsers, setIsSearchingUsers] = useState(false);
   const [isAssigningRole, setIsAssigningRole] = useState<string | null>(null);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [isDeletingUser, setIsDeletingUser] = useState<string | null>(null);
+  const [addUserForm, setAddUserForm] = useState({
+    email: "",
+    password: "",
+    role: "user" as "admin" | "employee" | "user",
+  });
 
   // Editor info state
   const [editorInfo, setEditorInfo] = useState<Record<string, string>>({});
@@ -407,13 +415,22 @@ const Admin = () => {
     }
   };
 
-  const handleAssignRole = async (userId: string, role: 'employee' | 'admin') => {
+  const handleAssignRole = async (userId: string, role: string) => {
     setIsAssigningRole(userId);
     try {
-      const { error } = await supabase.rpc('assign_role_to_user', { target_user_id: userId, target_role: role });
+      const targetRole = role as "admin" | "employee" | "user";
+      // First remove existing roles if any (simplified for single role selection)
+      const currentRoles = userRoles[userId] || [];
+      for (const r of currentRoles) {
+        if (r !== targetRole) {
+          await (supabase.rpc as any)('remove_role_from_user', { target_user_id: userId, target_role: r });
+        }
+      }
+
+      const { error } = await (supabase.rpc as any)('assign_role_to_user', { target_user_id: userId, target_role: targetRole });
       if (error) throw error;
-      toast({ title: `تم إضافة صلاحية ${role === 'employee' ? 'موظف' : 'مدير'} بنجاح` });
-      setUserRoles(prev => ({ ...prev, [userId]: [...(prev[userId] || []), role] }));
+      toast({ title: "تم تحديث الصلاحية بنجاح" });
+      setUserRoles(prev => ({ ...prev, [userId]: [role] }));
     } catch (error: any) {
       toast({ title: "حدث خطأ", description: error.message, variant: "destructive" });
     } finally {
@@ -421,17 +438,48 @@ const Admin = () => {
     }
   };
 
-  const handleRemoveRole = async (userId: string, role: 'employee' | 'admin') => {
-    setIsAssigningRole(userId);
+  const handleCreateUser = async () => {
+    if (!addUserForm.email || !addUserForm.password) {
+      toast({ title: "يرجى ملء جميع الحقول", variant: "destructive" });
+      return;
+    }
+    setIsCreatingUser(true);
     try {
-      const { error } = await supabase.rpc('remove_role_from_user', { target_user_id: userId, target_role: role });
+      // In a real app, you'd use a secure RPC that calls auth.admin.createUser
+      // For now, we'll use signUp which works if the user is not signed in,
+      // but in an admin dashboard, we usually need an RPC to avoid signing out the admin.
+      const { data, error } = await (supabase.rpc as any)('create_new_user', {
+        user_email: addUserForm.email,
+        user_password: addUserForm.password,
+        user_role: addUserForm.role
+      });
+
       if (error) throw error;
-      toast({ title: `تم إزالة صلاحية ${role === 'employee' ? 'موظف' : 'مدير'} بنجاح` });
-      setUserRoles(prev => ({ ...prev, [userId]: (prev[userId] || []).filter(r => r !== role) }));
+
+      toast({ title: "تم إنشاء المستخدم بنجاح" });
+      setIsAddUserModalOpen(false);
+      setAddUserForm({ email: "", password: "", role: "user" });
+      handleSearchUsers("");
     } catch (error: any) {
-      toast({ title: "حدث خطأ", description: error.message, variant: "destructive" });
+      toast({ title: "خطأ في إنشاء المستخدم", description: error.message, variant: "destructive" });
     } finally {
-      setIsAssigningRole(null);
+      setIsCreatingUser(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (confirm("هل أنت متأكد من حذف هذا المستخدم نهائياً؟")) {
+      setIsDeletingUser(userId);
+      try {
+        const { error } = await (supabase.rpc as any)('delete_user_by_id', { target_user_id: userId });
+        if (error) throw error;
+        toast({ title: "تم حذف المستخدم بنجاح" });
+        setSearchedUsers(prev => prev.filter(u => u.user_id !== userId));
+      } catch (error: any) {
+        toast({ title: "خطأ في حذف المستخدم", description: error.message, variant: "destructive" });
+      } finally {
+        setIsDeletingUser(null);
+      }
     }
   };
   const SidebarContent = ({ mobile = false }: { mobile?: boolean }) => (
@@ -704,7 +752,16 @@ const Admin = () => {
           {/* Users Tab */}
           {activeTab === "users" && (
             <div>
-              <h1 className="text-2xl font-bold text-foreground mb-6">إدارة المستخدمين</h1>
+              <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl font-bold text-foreground">إدارة المستخدمين</h1>
+                <button
+                  onClick={() => setIsAddUserModalOpen(true)}
+                  className="btn-primary inline-flex items-center gap-2"
+                >
+                  <UserPlus className="w-5 h-5" />
+                  إضافة مستخدم
+                </button>
+              </div>
 
               <div className="bg-card rounded-xl border border-border p-6 mb-6">
                 <div className="flex gap-3 mb-4">
@@ -724,7 +781,6 @@ const Admin = () => {
                   </button>
                 </div>
 
-                {/* Show list even if searchedUsers is defined but empty only if we searched */}
                 {(searchedUsers.length > 0 || isSearchingUsers) && (
                   <div className="space-y-3">
                     {searchedUsers.map((u) => (
@@ -735,41 +791,43 @@ const Admin = () => {
                             انضم: {new Date(u.created_at).toLocaleDateString("ar-SA")}
                           </p>
                           <div className="flex gap-2 mt-2">
-                            {userRoles[u.user_id]?.includes('admin') && (
-                              <span className="px-2 py-0.5 text-xs rounded-full bg-primary text-primary-foreground">مدير</span>
-                            )}
-                            {userRoles[u.user_id]?.includes('employee') && (
-                              <span className="px-2 py-0.5 text-xs rounded-full bg-accent text-accent-foreground">موظف</span>
-                            )}
+                            {userRoles[u.user_id]?.map(role => (
+                              <span key={role} className={`px-2 py-0.5 text-xs rounded-full ${role === 'admin' ? 'bg-primary text-primary-foreground' : 'bg-accent text-accent-foreground'
+                                }`}>
+                                {role === 'admin' ? 'مدير' : role === 'employee' ? 'موظف' : 'مستخدم'}
+                              </span>
+                            ))}
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          {!userRoles[u.user_id]?.includes('employee') ? (
-                            <button
-                              onClick={() => handleAssignRole(u.user_id, 'employee')}
-                              disabled={isAssigningRole === u.user_id}
-                              className="btn-secondary text-sm flex items-center gap-1"
-                            >
-                              <UserPlus className="w-4 h-4" />
-                              موظف
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleRemoveRole(u.user_id, 'employee')}
-                              disabled={isAssigningRole === u.user_id}
-                              className="btn-secondary text-sm text-destructive flex items-center gap-1"
-                            >
-                              <UserMinus className="w-4 h-4" />
-                              إزالة موظف
-                            </button>
-                          )}
+                        <div className="flex items-center gap-3">
+                          <select
+                            value={userRoles[u.user_id]?.[0] || 'user'}
+                            onChange={(e) => handleAssignRole(u.user_id, e.target.value)}
+                            disabled={isAssigningRole === u.user_id}
+                            className="input-field py-1 text-sm w-32"
+                          >
+                            <option value="user">مستخدم</option>
+                            <option value="employee">موظف</option>
+                            <option value="admin">مدير</option>
+                          </select>
+
+                          <button
+                            onClick={() => handleDeleteUser(u.user_id)}
+                            disabled={isDeletingUser === u.user_id}
+                            className="p-2 rounded-lg hover:bg-destructive/10 text-foreground hover:text-destructive transition-colors"
+                            title="حذف المستخدم"
+                          >
+                            {isDeletingUser === u.user_id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
-
-
 
                 {searchedUsers.length === 0 && !isSearchingUsers && (
                   <p className="text-center text-foreground py-4">
@@ -1030,9 +1088,6 @@ const Admin = () => {
           )}
         </main>
       </div>
-
-
-
       {/* Ad Unit Modal */}
       <Dialog open={isAdUnitModalOpen} onOpenChange={setIsAdUnitModalOpen}>
         <DialogContent>
@@ -1095,7 +1150,6 @@ const Admin = () => {
                   <option value="blog_post_bottom">blog_post_bottom - لوحة إعلانية قبل الفوتر</option>
                 </optgroup>
               </select>
-              <p className="text-xs text-foreground mt-1 font-medium">اختر المكان المناسب من القائمة (3 إعلانات فقط لكل صفحة وفقاً لسياسة Google AdSense)</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -1141,8 +1195,67 @@ const Admin = () => {
             </div>
           </div>
         </DialogContent>
-      </Dialog >
-    </div >
+      </Dialog>
+
+      {/* Add User Modal */}
+      <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>إضافة مستخدم جديد</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-foreground">البريد الإلكتروني</label>
+              <input
+                type="email"
+                value={addUserForm.email}
+                onChange={(e) => setAddUserForm({ ...addUserForm, email: e.target.value })}
+                className="input-field"
+                placeholder="example@email.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-foreground">كلمة المرور</label>
+              <input
+                type="password"
+                value={addUserForm.password}
+                onChange={(e) => setAddUserForm({ ...addUserForm, password: e.target.value })}
+                className="input-field"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2 text-foreground">الصلاحية</label>
+              <select
+                value={addUserForm.role}
+                onChange={(e) => setAddUserForm({ ...addUserForm, role: e.target.value as any })}
+                className="input-field"
+              >
+                <option value="user">مستخدم (User)</option>
+                <option value="employee">موظف (Employee)</option>
+                <option value="admin">مدير (Admin)</option>
+              </select>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={handleCreateUser}
+                disabled={isCreatingUser}
+                className="btn-primary flex-1"
+              >
+                {isCreatingUser && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
+                إنشاء المستخدم
+              </button>
+              <button onClick={() => setIsAddUserModalOpen(false)} className="btn-secondary">
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
