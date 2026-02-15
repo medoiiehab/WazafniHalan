@@ -18,6 +18,7 @@ export interface Job {
   is_featured: boolean | null;
   image_url: string | null;
   is_published?: boolean | null;
+  focus_keyword?: string | null;
   editor: string | null;
   created_at: string;
   updated_at: string;
@@ -35,6 +36,7 @@ export interface BlogPost {
   is_published: boolean | null;
   meta_title: string | null;
   meta_description: string | null;
+  focus_keyword?: string | null;
   created_at: string;
   updated_at: string;
 }

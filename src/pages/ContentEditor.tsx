@@ -63,6 +63,7 @@ const ContentEditor = () => {
     const [imageUrl, setImageUrl] = useState("");
     const [tags, setTags] = useState("");
     const [focusKeyword, setFocusKeyword] = useState("");
+    const [hasLoadedData, setHasLoadedData] = useState(false);
 
     // Job specific state
     const [company, setCompany] = useState("");
@@ -80,6 +81,8 @@ const ContentEditor = () => {
 
     // Load Data
     useEffect(() => {
+        if (hasLoadedData) return; // Prevent overwriting user edits on background refetches
+
         if (isJob && jobData) {
             setTitle(jobData.title);
             setContent(jobData.description);
@@ -94,10 +97,11 @@ const ContentEditor = () => {
             setExclusiveTag(jobData.exclusive_tag || "none");
             setRequirements(jobData.requirements?.join("\n") || "");
             setTags(jobData.tags?.join(", ") || "");
-            setFocusKeyword(jobData.tags?.[0] || ""); // Use first tag as focus keyword
+            setFocusKeyword(jobData.focus_keyword || "");
             setImageUrl(jobData.image_url || "");
             setIsFeatured(jobData.is_featured || false);
-            // Jobs don't have is_published currently, assume published if exists? Or add status later.
+            setStatus(jobData.is_published ? "published" : "draft");
+            setHasLoadedData(true);
         } else if (!isJob && blogData) {
             setTitle(blogData.title);
             setContent(blogData.content);
@@ -108,10 +112,16 @@ const ContentEditor = () => {
             setStatus(blogData.is_published ? "published" : "draft");
             setAuthor(blogData.author || "فريق وظفني حالاً");
             setTags(blogData.tags?.join(", ") || "");
-            setFocusKeyword(blogData.tags?.[0] || ""); // Use first tag as focus keyword
+            setFocusKeyword(blogData.focus_keyword || "");
             setImageUrl(blogData.image_url || "");
+            setHasLoadedData(true);
         }
-    }, [jobData, blogData, isJob]);
+    }, [jobData, blogData, isJob, hasLoadedData]);
+
+    // Reset hasLoadedData when ID changes
+    useEffect(() => {
+        setHasLoadedData(false);
+    }, [id]);
 
     // Auto-save logic
     useEffect(() => {
@@ -119,7 +129,7 @@ const ContentEditor = () => {
             const draftKey = `draft_${type}_${id || 'new'}`;
             const draftData = {
                 title, content, slug, excerpt, metaTitle, metaDescription,
-                company, country, salary, tags, requirements,
+                company, country, salary, tags, focusKeyword, requirements,
                 timestamp: Date.now()
             };
             localStorage.setItem(draftKey, JSON.stringify(draftData));
@@ -140,6 +150,8 @@ const ContentEditor = () => {
                 // Or simply restore fields if they are empty.
                 if (!title && parsed.title) setTitle(parsed.title);
                 if (!content && parsed.content) setContent(parsed.content);
+                if (!focusKeyword && parsed.focusKeyword) setFocusKeyword(parsed.focusKeyword);
+                if (!tags && parsed.tags) setTags(parsed.tags);
             }
         }
     }, [isEditMode, type]);
@@ -159,6 +171,7 @@ const ContentEditor = () => {
                     job_type: jobType,
                     requirements: requirements ? requirements.split("\n").filter(r => r.trim()) : null,
                     tags: tags ? tags.split(",").map(t => t.trim()).filter(t => t) : null,
+                    focus_keyword: focusKeyword || null,
                     exclusive_tag: exclusiveTag,
                     apply_link: applyLink || null,
                     image_url: imageUrl || null,
@@ -184,6 +197,7 @@ const ContentEditor = () => {
                     image_url: imageUrl || null,
                     author: author || null,
                     tags: tags ? tags.split(",").map(t => t.trim()).filter(t => t) : null,
+                    focus_keyword: focusKeyword || null,
                     is_published: status === "published",
                     meta_title: metaTitle || null,
                     meta_description: metaDescription || null,
@@ -353,7 +367,7 @@ const ContentEditor = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>{isJob ? "meta description" : "meta description"}</Label>
+                            <Label>وصف الميتا (Meta Description)</Label>
                             <Textarea
                                 value={excerpt}
                                 onChange={e => setExcerpt(e.target.value)}
@@ -449,6 +463,7 @@ const ContentEditor = () => {
                                             <SelectItem value="urgent">عاجل</SelectItem>
                                             <SelectItem value="featured">مميز</SelectItem>
                                             <SelectItem value="high_pay">راتب مرتفع</SelectItem>
+                                            <SelectItem value="new">جديد</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

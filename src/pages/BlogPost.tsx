@@ -42,6 +42,14 @@ const BlogPost = () => {
       <Helmet>
         <title>{post.title} | مدونة وظفني حالاً</title>
         <meta name="description" content={post.excerpt || ''} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.excerpt || ''} />
+        <meta property="og:image" content={post.image_url || 'https://www.wazafnihalan.com/og-image.jpg'} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.excerpt || ''} />
+        {post.focus_keyword && <meta name="keywords" content={post.focus_keyword} />}
       </Helmet>
 
       {/* AdSense 1 - Top Leaderboard */}

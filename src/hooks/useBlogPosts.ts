@@ -9,7 +9,7 @@ export const useBlogPosts = () => {
       const { data, error } = await supabase
         .from('blog_posts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
       return data as BlogPost[];
@@ -25,7 +25,7 @@ export const usePublishedBlogPosts = () => {
         .from('blog_posts')
         .select('*')
         .eq('is_published', true)
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
       return data as BlogPost[];

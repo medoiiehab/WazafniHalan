@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import JobCard from '@/components/jobs/JobCard';
 import AdSense from '@/components/common/AdSense';
-import { useJobs } from '@/hooks/useJobs';
+import { usePublishedJobs } from '@/hooks/useJobs';
 import { countries } from '@/types/database';
 import PageHeader from '@/components/layout/PageHeader';
 
@@ -25,7 +25,7 @@ const AllJobs = () => {
         }
     }, [countrySlug]);
 
-    const { data: allJobs = [], isLoading, error } = useJobs();
+    const { data: allJobs = [], isLoading, error } = usePublishedJobs();
 
     // Debug log
     useEffect(() => {
@@ -77,8 +77,8 @@ const AllJobs = () => {
 
         // Sort jobs
         filtered = filtered.sort((a, b) => {
-            const dateA = new Date(a?.created_at || 0).getTime();
-            const dateB = new Date(b?.created_at || 0).getTime();
+            const dateA = new Date(a?.updated_at || a?.created_at || 0).getTime();
+            const dateB = new Date(b?.updated_at || b?.created_at || 0).getTime();
 
             if (sortBy === 'newest') {
                 return dateB - dateA;
@@ -181,6 +181,13 @@ const AllJobs = () => {
                 />
                 <meta name="keywords" content="جميع الوظائف، فرص عمل، وظائف الخليج، وظائف الشرق الأوسط، توظيف، وظائف شاغرة" />
                 <link rel="canonical" href="https://www.wazafnihalan.com/all-jobs" />
+                <meta property="og:title" content={`جميع الوظائف - ${allJobs.length} فرصة عمل`} />
+                <meta property="og:description" content={`تصفح جميع الوظائف المتاحة في دول الخليج العربي ومصر. ${allJobs.length} فرصة عمل في مختلف المجالات والتخصصات.`} />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://www.wazafnihalan.com/og-image.jpg" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="جميع الوظائف | وظفني حالاً" />
+                <meta name="twitter:description" content="ابحث عن وظيفتك المثالية من بين آلاف الفرص المتاحة." />
             </Helmet>
 
             {/* Hero Section */}

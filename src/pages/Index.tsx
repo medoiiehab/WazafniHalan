@@ -6,7 +6,7 @@ import Layout from '@/components/layout/Layout';
 import JobCard from '@/components/jobs/JobCard';
 import FeaturedJobsSlider from '@/components/jobs/FeaturedJobsSlider';
 import AdSense from '@/components/common/AdSense';
-import { useJobs, useFeaturedJobs, useSearchJobs } from '@/hooks/useJobs';
+import { useJobs, usePublishedJobs, useFeaturedJobs, useSearchJobs } from '@/hooks/useJobs';
 import { countries } from '@/types/database';
 
 const Index = () => {
@@ -15,7 +15,7 @@ const Index = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>('all');
 
-  const { data: allJobs = [], isLoading: isLoadingJobs } = useJobs();
+  const { data: allJobs = [], isLoading: isLoadingJobs } = usePublishedJobs();
   const { data: featuredJobs = [] } = useFeaturedJobs();
   const { data: searchResults = [], isLoading: isSearchLoading } = useSearchJobs(debouncedSearch);
 
@@ -70,10 +70,14 @@ const Index = () => {
         <meta property="og:image" content="https://www.wazafnihalan.com/og-image.jpg" />
 
         {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.wazafnihalan.com" />
-        <meta property="twitter:title" content="وظفني حالاً | أحدث وظائف الخليج" />
-        <meta property="twitter:description" content="ابحث عن وظيفتك القادمة الآن في الكويت والسعودية والإمارات." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.wazafnihalan.com" />
+        <meta name="twitter:title" content="وظفني حالاً | أحدث وظائف الخليج" />
+        <meta name="twitter:description" content="ابحث عن وظيفتك القادمة الآن في الكويت والسعودية والإمارات." />
+        <meta name="twitter:image" content="https://www.wazafnihalan.com/og-image.jpg" />
+
+        <meta property="og:locale" content="ar_SA" />
+        <meta property="og:site_name" content="وظفني حالاً" />
 
         <script type="application/ld+json">
           {JSON.stringify({
@@ -106,9 +110,9 @@ const Index = () => {
             <span>نحدث الوظائف على مدار الساعة</span>
           </div>
 
-          <h6 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow">
+          <h1 className="text-3xl sm:text-2xl md:text-2xl lg:text-5xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow">
             طريقك نحو <span className="">الوظيفة المثالية</span> <br className="hidden md:block" /> في لمح البصر
-          </h6>
+          </h1>
 
           <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto px-2 animate-slide-up animate-delay-100 font-medium leading-relaxed">
             انضم إلى أكثر من <span className="text-blue-100 font-bold">٥٠,٠٠٠</span> باحث عن عمل يجدون فرصهم يومياً في الخليج العربي ومصر.

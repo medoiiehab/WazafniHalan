@@ -32,7 +32,11 @@ interface DailyAnalytics {
   views: number;
   clicks: number;
 }
-
+interface DbStatRow {
+  date_key: string;
+  views: number | string;
+  clicks: number | string;
+}
 export const useAnalyticsSummary = () => {
   return useQuery({
     queryKey: ['analytics-summary'],
@@ -160,43 +164,43 @@ export const useDailyAnalytics = (days: number = 7) => {
     queryKey: ['daily-analytics', days],
     refetchInterval: 15000,
     queryFn: async (): Promise<DailyAnalytics[]> => {
-      const now = new Date();
-      // Calculate start date in UTC - get the date that is `days - 1` days ago
-      // For example, with days=7, we get data from today back to 6 days ago (7 days total)
-      const startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - (days - 1)));
-
-      const { data: analytics, error } = await supabase
-        .from('job_analytics')
-        .select('event_type, created_at')
-        .gte('created_at', startDate.toISOString());
+      // 2. استخدام (supabase as any) لتخطي خطأ TypeScript في تعريف الدوال
+      // مع تحديد المعاملات والبيانات المسترجعة
+      const { data, error } = await (supabase as any)
+        .rpc('get_daily_stats', { lookback_days: days });
 
       if (error) {
-        console.error('useDailyAnalytics -Error fetching job analytics:', error);
-        throw error;
+        console.error('❌ Supabase RPC Error:', error.message);
+        throw new Error(error.message);
       }
 
-      // Initialize the map with all the dates we're interested in
-      const dateMap = new Map<string, { views: number; clicks: number }>();
-      for (let i = 0; i < days; i++) {
-        const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
-        const dateKey = d.toISOString().substring(0, 10); // "YYYY-MM-DD"
-        dateMap.set(dateKey, { views: 0, clicks: 0 });
+      // تحويل النتيجة لمصفوفة صريحة من النوع الذي عرفناه
+      const dbStats = (data as DbStatRow[]) || [];
+
+      const result: DailyAnalytics[] = [];
+      const now = new Date();
+
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        // الآن لن يظهر خطأ على date_key أو views
+        const dayStats = dbStats.find((item) => item.date_key === dateStr);
+
+        result.push({
+          date: dateStr,
+          views: dayStats ? Number(dayStats.views) : 0,
+          clicks: dayStats ? Number(dayStats.clicks) : 0
+        });
       }
 
-      // Aggregate events by date
-      (analytics || []).forEach(a => {
-        const dateStr = a.created_at.substring(0, 10);
-        const existing = dateMap.get(dateStr);
-        if (existing) {
-          if (a.event_type === 'view') existing.views++;
-          else if (a.event_type === 'click') existing.clicks++;
-        }
-      });
-
-      // Return results sorted by date (ascending)
-      return Array.from(dateMap.entries())
-        .map(([date, data]) => ({ date, views: data.views, clicks: data.clicks }))
-        .sort((a, b) => a.date.localeCompare(b.date));
+      console.log('✅ Chart Data Ready:', result);
+      return result;
     },
   });
 };

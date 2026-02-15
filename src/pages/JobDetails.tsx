@@ -5,7 +5,7 @@ import { MapPin, Building2, Banknote, Calendar, ExternalLink, Share2, ArrowRight
 import Layout from '@/components/layout/Layout';
 import JobCard from '@/components/jobs/JobCard';
 import AdSense from '@/components/common/AdSense';
-import { useJob, useJobs } from '@/hooks/useJobs';
+import { useJob, usePublishedJobs } from '@/hooks/useJobs';
 import { useTrackJobEvent } from '@/hooks/useJobAnalytics';
 import { exclusiveTagLabels, Job } from '@/types/database';
 import PageHeader from '@/components/layout/PageHeader';
@@ -29,7 +29,7 @@ const getJobImage = (job: Job) => {
 const JobDetails = () => {
   const { jobId } = useParams<{ jobId: string }>();
   const { data: job, isLoading } = useJob(jobId || '');
-  const { data: allJobs = [] } = useJobs();
+  const { data: allJobs = [] } = usePublishedJobs();
   const trackEvent = useTrackJobEvent();
 
   // Track job view
@@ -70,11 +70,16 @@ const JobDetails = () => {
       <Helmet>
         <title>{job.title} | وظائف {job.country} | وظفني حالاً</title>
         <meta name="description" content={job.short_description || job.description.slice(0, 160)} />
-        <meta name="keywords" content={`${job.title}، وظائف ${job.country}، ${job.company || ''}، فرص عمل`} />
+        <meta name="keywords" content={job.focus_keyword || `${job.title}، وظائف ${job.country}، ${job.company || ''}، فرص عمل`} />
         <link rel="canonical" href={`https://www.wazafnihalan.com/job/${job.id}`} />
         <meta property="og:title" content={`${job.title} - ${job.company || 'وظيفة جديدة'}`} />
         <meta property="og:description" content={job.short_description || job.description.slice(0, 160)} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content={getJobImage(job)} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={job.title} />
+        <meta name="twitter:description" content={job.short_description || job.description.slice(0, 160)} />
+        <meta name="twitter:image" content={getJobImage(job)} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -136,7 +141,7 @@ const JobDetails = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <h1 className="text-xl font-bold mb-1 text-primary">{job.title}</h1>
-                     <h3 className="text-xl mb-1 text-foreground">تفاصيل الوظيفة</h3>
+                    <h3 className="text-xl mb-1 text-foreground">تفاصيل الوظيفة</h3>
                     <p className="text-foreground text-sm">اقرأ الوصف والمتطلبات بعناية قبل التقديم</p>
                   </div>
                   {job.salary && (

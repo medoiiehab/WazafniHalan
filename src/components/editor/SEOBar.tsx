@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AlertCircle, CheckCircle, TrendingUp } from "lucide-react";
 
 interface SEOBarProps {
@@ -28,6 +28,8 @@ interface SEOScore {
 const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }: SEOBarProps) => {
   const [focusKeyword, setFocusKeyword] = useState(focus_keyword);
   const [seoScore, setSeoScore] = useState<SEOScore>({ score: 0, details: [] });
+  const isUpdatingFromParent = useRef(false);
+  const isUpdatingFromChild = useRef(false);
 
   // Calculate SEO score
   const calculateSEOScore = () => {
@@ -50,7 +52,7 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
       }
 
       if (focusKeyword && title.toLowerCase().includes(focusKeyword.toLowerCase())) {
-        score += 10; // Extra points for keyword in title
+        score += 10;
         details.push({ type: 'good', message: 'Focus keyword appears in title' });
       } else if (focusKeyword) {
         details.push({ type: 'warning', message: 'Focus keyword should appear in title' });
@@ -73,7 +75,7 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
       }
 
       if (focusKeyword && description.toLowerCase().includes(focusKeyword.toLowerCase())) {
-        score += 10; // Extra points for keyword
+        score += 10;
         details.push({ type: 'good', message: 'Focus keyword appears in meta description' });
       } else if (focusKeyword) {
         details.push({ type: 'warning', message: 'Focus keyword should appear in meta description' });
@@ -100,23 +102,37 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
       details.push({ type: 'good', message: 'Focus keyword is set' });
     }
 
-    // Cap score at 100
     setSeoScore({ score: Math.min(score, 100), details });
   };
 
+  // Update score when relevant props change
   useEffect(() => {
     calculateSEOScore();
   }, [title, description, focusKeyword, slug]);
 
+  // Sync prop -> state (only when prop changes and not during local updates)
   useEffect(() => {
-    if (onChange) {
+    if (focus_keyword !== focusKeyword && !isUpdatingFromChild.current) {
+      isUpdatingFromParent.current = true;
+      setFocusKeyword(focus_keyword);
+    }
+  }, [focus_keyword]);
+
+  // Sync state -> parent (only when state changes and not during parent updates)
+  useEffect(() => {
+    if (onChange && focusKeyword !== focus_keyword && !isUpdatingFromParent.current) {
+      isUpdatingFromChild.current = true;
       onChange({
         focus_keyword: focusKeyword,
         meta_description: description,
         slug: slug,
       });
     }
-  }, [focusKeyword, description, slug, onChange]);
+
+    // Reset flags after update
+    isUpdatingFromParent.current = false;
+    isUpdatingFromChild.current = false;
+  }, [focusKeyword, onChange, focus_keyword, description, slug]);
 
   const getScoreColor = () => {
     if (seoScore.score >= 80) return "bg-green-100 dark:bg-green-900/30";
@@ -138,6 +154,11 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
       return <TrendingUp className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />;
     }
     return <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />;
+  };
+
+  const handleFocusKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setFocusKeyword(newValue);
   };
 
   return (
@@ -168,7 +189,7 @@ const SEOBar = ({ title, description, slug = "", focus_keyword = "", onChange }:
         <input
           type="text"
           value={focusKeyword}
-          onChange={(e) => setFocusKeyword(e.target.value)}
+          onChange={handleFocusKeywordChange}
           placeholder="Enter your focus keyword (e.g., 'remote job')"
           className="w-full px-3 py-2 text-sm rounded border border-border bg-background text-foreground"
         />

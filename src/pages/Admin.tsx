@@ -20,6 +20,7 @@ import {
   UserMinus,
   Megaphone,
   Menu,
+  Eye,
 } from "lucide-react";
 import { useJobs, useCreateJob, useUpdateJob, useDeleteJob } from "@/hooks/useJobs";
 import { useBlogPosts, useCreateBlogPost, useUpdateBlogPost, useDeleteBlogPost } from "@/hooks/useBlogPosts";
@@ -633,7 +634,7 @@ const Admin = () => {
                           <th className="text-right py-3 px-4 font-medium text-foreground">العنوان</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">الشركة</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">الدولة</th>
-                          <th className="text-right py-3 px-4 font-medium text-foreground">الوسم</th>
+                          <th className="text-right py-3 px-4 font-medium text-foreground">إحصائيات المشاهدة</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">المحرر</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">التاريخ</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">الإجراءات</th>
@@ -658,11 +659,12 @@ const Admin = () => {
                             <td className="py-3 px-4 text-foreground font-medium">{job.company}</td>
                             <td className="py-3 px-4 text-foreground font-medium">{job.country}</td>
                             <td className="py-3 px-4">
-                              {job.exclusive_tag && job.exclusive_tag !== "none" && (
-                                <span className="px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-xs">
-                                  {exclusiveTagLabels[job.exclusive_tag]}
+                              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 w-fit">
+                                <Eye className="w-4 h-4" />
+                                <span className="text-sm font-bold">
+                                  {(jobsAnalytics.find(a => a.job_id === job.id)?.views || 0).toLocaleString("ar-SA")}
                                 </span>
-                              )}
+                              </div>
                             </td>
                             <td className="py-3 px-4 text-foreground text-sm font-medium">
                               {job.editor ? (

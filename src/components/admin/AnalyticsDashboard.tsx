@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import {
     AreaChart,
     Area,
@@ -160,15 +160,67 @@ const AnalyticsDashboard = ({
         return ((analyticsSummary.clicks_today / analyticsSummary.views_today) * 100);
     }, [analyticsSummary]);
 
-    // Chart data for daily analytics
+    // Chart data for daily analytics with better date handling
     const chartDailyData = useMemo(() => {
-        return dailyAnalytics.map((day) => ({
-            name: new Date(day.date).toLocaleDateString("ar-SA", { weekday: "short", day: "numeric" }),
-            المشاهدات: day.views,
-            النقرات: day.clicks,
-            "معدل التحويل": day.views > 0 ? parseFloat(((day.clicks / day.views) * 100).toFixed(1)) : 0,
-        }));
+        console.log('📊 Processing chart data from dailyAnalytics:', dailyAnalytics);
+
+        if (!dailyAnalytics || dailyAnalytics.length === 0) {
+            console.log('⚠️ No daily analytics data available');
+            return [];
+        }
+
+        const arabicDays: Record<string, string> = {
+            'Sun': 'الأحد',
+            'Mon': 'الإثنين',
+            'Tue': 'الثلاثاء',
+            'Wed': 'الأربعاء',
+            'Thu': 'الخميس',
+            'Fri': 'الجمعة',
+            'Sat': 'السبت'
+        };
+
+        return dailyAnalytics.map((day) => {
+            const date = new Date(day.date);
+
+            // Get Arabic day name
+            const englishDay = date.toLocaleDateString('en-US', { weekday: 'short' });
+            const arabicDay = arabicDays[englishDay] || englishDay;
+
+            // Format: "الأحد ١٥" or "الثلاثاء ١٧"
+            const dayNumber = date.toLocaleDateString('ar-SA', { day: 'numeric' });
+            const displayName = `${arabicDay} ${dayNumber}`;
+
+            console.log(`📅 Processing ${day.date}:`, {
+                originalDate: day.date,
+                displayName,
+                views: day.views,
+                clicks: day.clicks
+            });
+
+            return {
+                name: displayName,
+                المشاهدات: day.views,
+                النقرات: day.clicks,
+                "معدل التحويل": day.views > 0
+                    ? parseFloat(((day.clicks / day.views) * 100).toFixed(1))
+                    : 0,
+            };
+        });
     }, [dailyAnalytics]);
+
+    // Debugging analytics data
+    useEffect(() => {
+        console.log('🔄 AnalyticsDashboard mounted/updated');
+        console.log('📊 dailyAnalytics:', dailyAnalytics);
+        console.log('📈 chartDailyData:', chartDailyData);
+        console.log('🔍 dailyAnalytics length:', dailyAnalytics?.length);
+
+        if (dailyAnalytics && dailyAnalytics.length > 0) {
+            console.log('📅 Dates in dailyAnalytics:', dailyAnalytics.map(d => d.date));
+            console.log('👁️ Views per day:', dailyAnalytics.map(d => d.views));
+            console.log('🖱️ Clicks per day:', dailyAnalytics.map(d => d.clicks));
+        }
+    }, [dailyAnalytics, chartDailyData]);
 
     // Country pie data for views
     const countryViewsPieData = useMemo(() => {
@@ -234,12 +286,23 @@ const AnalyticsDashboard = ({
     ];
 
     // Week totals
-    const weekTotalViews = dailyAnalytics.reduce((sum, d) => sum + d.views, 0);
-    const weekTotalClicks = dailyAnalytics.reduce((sum, d) => sum + d.clicks, 0);
-    const avgDailyViews = dailyAnalytics.length > 0 ? Math.round(weekTotalViews / dailyAnalytics.length) : 0;
-    const avgDailyClicks = dailyAnalytics.length > 0 ? Math.round(weekTotalClicks / dailyAnalytics.length) : 0;
+    const weekTotalViews = useMemo(() => {
+        return dailyAnalytics.reduce((sum, d) => sum + d.views, 0);
+    }, [dailyAnalytics]);
 
-    // Best day
+    const weekTotalClicks = useMemo(() => {
+        return dailyAnalytics.reduce((sum, d) => sum + d.clicks, 0);
+    }, [dailyAnalytics]);
+
+    const avgDailyViews = useMemo(() => {
+        return dailyAnalytics.length > 0 ? Math.round(weekTotalViews / dailyAnalytics.length) : 0;
+    }, [dailyAnalytics, weekTotalViews]);
+
+    const avgDailyClicks = useMemo(() => {
+        return dailyAnalytics.length > 0 ? Math.round(weekTotalClicks / dailyAnalytics.length) : 0;
+    }, [dailyAnalytics, weekTotalClicks]);
+
+    // Best day calculation
     const bestDay = useMemo(() => {
         if (dailyAnalytics.length === 0) return null;
         return dailyAnalytics.reduce((best, day) =>
@@ -994,8 +1057,8 @@ const AnalyticsDashboard = ({
                                     </div>
                                     <div className="flex items-center gap-2 shrink-0">
                                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${job.is_published !== false
-                                                ? 'bg-emerald-500/10 text-emerald-500'
-                                                : 'bg-amber-500/10 text-amber-500'
+                                            ? 'bg-emerald-500/10 text-emerald-500'
+                                            : 'bg-amber-500/10 text-amber-500'
                                             }`}>
                                             {job.is_published !== false ? 'منشور' : 'مسودة'}
                                         </span>

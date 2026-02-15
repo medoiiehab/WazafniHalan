@@ -29,7 +29,7 @@ const PageHeader = ({ title, subtitle, children, className, backgroundImage }: P
             )}
 
             <div className="container-custom relative z-10 px-4 text-center">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow">
+                <h1 className="text-3xl sm:text-2xl md:text-2xl lg:text-5xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow">
                     {title}
                 </h1>
 

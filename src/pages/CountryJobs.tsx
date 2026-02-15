@@ -97,6 +97,10 @@ const CountryJobs = () => {
         <meta property="og:title" content={`وظائف ${country.name} - ${countryJobs.length} فرصة عمل متاحة`} />
         <meta property="og:description" content={`ابحث عن أحدث الوظائف في ${country.name}. ${countryJobs.length} فرصة عمل متاحة الآن.`} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.wazafnihalan.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`وظائف ${country.name}`} />
+        <meta name="twitter:description" content={`أحدث فرص العمل في ${country.name} - ${countryJobs.length} وظيفة متاحة.`} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
