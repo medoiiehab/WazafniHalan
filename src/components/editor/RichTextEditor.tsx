@@ -1,6 +1,7 @@
 import { useRef, useCallback, useState, useEffect, useMemo } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { getDirection } from "@/lib/utils";
 
 interface RichTextEditorProps {
   value: string;
@@ -10,22 +11,6 @@ interface RichTextEditorProps {
   toolbarContainerId?: string; // If provided, toolbar renders into this external element
 }
 
-// Auto-detect direction based on content --Updated to remove HTML tags and entities
-const getDirection = (text: string): "rtl" | "ltr" => {
-  if (!text) return "ltr";
-
-  // Remove ALL HTML tags and entities
-  const plainText = text
-    .replace(/<[^>]+>/g, '')  // Remove HTML tags
-    .replace(/&[a-z]+;/g, '') // Remove HTML entities (&nbsp;, &lt;, etc.)
-    .trim();
-
-  if (plainText.length === 0) return "ltr";
-
-  const arabicPattern = /[\u0600-\u06FF]/;
-  // Check the first non-whitespace characters
-  return arabicPattern.test(plainText.slice(0, 20)) ? "rtl" : "ltr";
-};
 
 const RichTextEditor = ({ value, onChange, placeholder, className = "", toolbarContainerId }: RichTextEditorProps) => {
   const quillRef = useRef<ReactQuill>(null);

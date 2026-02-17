@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Building2, Star, Timer, BriefcaseBusiness } from 'lucide-react';
 import { Job, exclusiveTagLabels } from '@/types/database';
+import { getDirection } from '@/lib/utils';
 
 interface JobCardProps {
   job: Job;
@@ -59,7 +60,10 @@ const JobCard = ({ job }: JobCardProps) => {
 
         {/* Content */}
         <div className="p-5 flex-1 flex flex-col">
-          <h3 className="text-[17px] font-bold text-foreground group-hover:text-primary transition-colors mb-3 line-clamp-2 leading-tight">
+          <h3
+            className="text-[17px] font-bold text-foreground group-hover:text-primary transition-colors mb-3 line-clamp-2 leading-tight"
+            dir={getDirection(job.title)}
+          >
             {job.title}
           </h3>
 

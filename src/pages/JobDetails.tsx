@@ -9,6 +9,7 @@ import { useJob, usePublishedJobs } from '@/hooks/useJobs';
 import { useTrackJobEvent } from '@/hooks/useJobAnalytics';
 import { exclusiveTagLabels, Job } from '@/types/database';
 import PageHeader from '@/components/layout/PageHeader';
+import { getDirection } from '@/lib/utils';
 
 // Placeholder work images
 const placeholderImages = [
@@ -58,6 +59,8 @@ const JobDetails = () => {
   const formatDate = (dateString: string) => {
     return new Intl.DateTimeFormat('ar-SA', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
   };
+
+  const jobDir = getDirection(job.description);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -140,7 +143,7 @@ const JobDetails = () => {
               <div className="px-4 py-6 border-b border-border/50">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h1 className="text-xl font-bold mb-1 text-primary">{job.title}</h1>
+                    <h1 className="text-xl font-bold mb-1 text-primary" dir={getDirection(job.title)}>{job.title}</h1>
                     <h3 className="text-xl mb-1 text-foreground">تفاصيل الوظيفة</h3>
                     <p className="text-foreground text-sm">اقرأ الوصف والمتطلبات بعناية قبل التقديم</p>
                   </div>
@@ -158,6 +161,8 @@ const JobDetails = () => {
                   <h2 className="text-xl font-bold text-foreground mb-3">وصف الوظيفة</h2>
                   <div
                     className="text-foreground leading-relaxed prose prose-invert max-w-none"
+                    dir={jobDir}
+                    style={{ textAlign: jobDir === 'rtl' ? 'right' : 'left' }}
                     dangerouslySetInnerHTML={{ __html: job.description }}
                   />
                 </section>
@@ -170,9 +175,9 @@ const JobDetails = () => {
                 {job.requirements && job.requirements.length > 0 && (
                   <section>
                     <h2 className="text-xl font-bold text-foreground mb-3">المتطلبات</h2>
-                    <ul className="space-y-2">
+                    <ul className="space-y-2" dir={jobDir}>
                       {job.requirements.map((req, index) => (
-                        <li key={index} className="flex items-start gap-2 text-foreground">
+                        <li key={index} className="flex items-start gap-2 text-foreground" style={{ textAlign: jobDir === 'rtl' ? 'right' : 'left' }}>
                           <span className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                           {req}
                         </li>

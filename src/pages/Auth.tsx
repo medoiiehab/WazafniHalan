@@ -128,6 +128,7 @@ const Auth = () => {
 
       <Helmet>
         <title>{isSignUp ? 'إنشاء حساب' : 'تسجيل الدخول'} | وظفني حالاً</title>
+        <link rel="canonical" href={`https://www.wazafnihalan.com${isSignUp ? '/auth?signup=true' : '/auth'}`} />
       </Helmet>
 
       {/* AdSense 1 - Top */}

@@ -8,6 +8,7 @@ import { exclusiveTagLabels, Job, BlogPost } from "@/types/database";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
+import { getDirection } from "@/lib/utils";
 
 type TabType = "jobs" | "blog";
 
@@ -214,7 +215,7 @@ const EmployeeDashboard = () => {
                         {filteredJobs.map((job) => (
                           <tr key={job.id} className="border-b border-border hover:bg-muted/50">
                             <td className="py-3 px-4">
-                              <span className="font-medium text-foreground">{job.title}</span>
+                              <span className="font-medium text-foreground" dir={getDirection(job.title)}>{job.title}</span>
                               {job.is_featured && (
                                 <span className="mr-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
                                   مميز
@@ -290,7 +291,7 @@ const EmployeeDashboard = () => {
                       className="bg-card rounded-xl p-5 border border-border flex items-center justify-between"
                     >
                       <div>
-                        <h3 className="font-bold text-foreground mb-1">{post.title}</h3>
+                        <h3 className="font-bold text-foreground mb-1" dir={getDirection(post.title)}>{post.title}</h3>
                         <p className="text-sm text-foreground">
                           {post.author} • {formatDate(post.created_at)}
                           {!post.is_published && (

@@ -319,3 +319,16 @@
 #editor-toolbar~div .quill-editor-wrapper .ql-toolbar.ql-snow {
   display: none;
 }
+
+/* Link Styling for Editor and Content */
+.ql-editor a,
+.prose a {
+  color: hsl(210 85% 45%) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+}
+
+.dark .ql-editor a,
+.dark .prose a {
+  color: hsl(210 85% 55%) !important;
+}

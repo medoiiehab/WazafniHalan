@@ -22,6 +22,7 @@ import { useJob, useCreateJob, useUpdateJob } from "@/hooks/useJobs";
 import { useBlogPostById, useCreateBlogPost, useUpdateBlogPost } from "@/hooks/useBlogPosts";
 import { Job, BlogPost, countries, JobExclusiveTag } from "@/types/database";
 import { useAuth } from "@/hooks/useAuth";
+import { getDirection } from "@/lib/utils";
 
 const ContentEditor = () => {
     const { type, id } = useParams<{ type: "job" | "blog"; id: string }>();
@@ -319,6 +320,7 @@ const ContentEditor = () => {
                             placeholder="عنـــوان الموضــوع..."
                             className="text-3xl font-bold border-none px-0 shadow-none focus-visible:ring-0 placeholder:text-foreground/50 h-auto py-4"
                             value={title}
+                            dir={getDirection(title)}
                             onChange={e => setTitle(e.target.value)}
                         />
 
@@ -337,6 +339,7 @@ const ContentEditor = () => {
                                 <Label>متطلبات الوظيفة (كل سطر متطلب)</Label>
                                 <Textarea
                                     value={requirements}
+                                    dir={getDirection(requirements)}
                                     onChange={e => setRequirements(e.target.value)}
                                     rows={6}
                                     placeholder="أدخل متطلبات الوظيفة..."

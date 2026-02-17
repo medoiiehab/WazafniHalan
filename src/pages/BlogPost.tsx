@@ -5,6 +5,7 @@ import Layout from '@/components/layout/Layout';
 import AdSense from '@/components/common/AdSense';
 import { useBlogPost, usePublishedBlogPosts } from '@/hooks/useBlogPosts';
 import PageHeader from '@/components/layout/PageHeader';
+import { getDirection } from '@/lib/utils';
 
 const BlogPost = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -31,6 +32,8 @@ const BlogPost = () => {
     return new Intl.DateTimeFormat('ar-SA', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
   };
 
+  const postDir = getDirection(post.content);
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({ title: post.title, text: post.excerpt || '', url: window.location.href });
@@ -42,6 +45,7 @@ const BlogPost = () => {
       <Helmet>
         <title>{post.title} | مدونة وظفني حالاً</title>
         <meta name="description" content={post.excerpt || ''} />
+        <link rel="canonical" href={`https://www.wazafnihalan.com/blog/${post.slug}`} />
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.excerpt || ''} />
         <meta property="og:image" content={post.image_url || 'https://www.wazafnihalan.com/og-image.jpg'} />
@@ -95,11 +99,13 @@ const BlogPost = () => {
               )}
 
               <div className="p-6 md:p-10">
-                <h2 className="section-title">{post.title}</h2>
+                <h2 className="section-title" dir={getDirection(post.title)}>{post.title}</h2>
                 <div
                   className="prose prose-lg max-w-none text-foreground leading-relaxed dark:prose-invert 
                   prose-headings:text-foreground prose-a:text-primary prose-strong:text-foreground
                   prose-img:rounded-xl prose-img:w-full prose-img:object-cover"
+                  dir={postDir}
+                  style={{ textAlign: postDir === 'rtl' ? 'right' : 'left' }}
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 

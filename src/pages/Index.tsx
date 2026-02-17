@@ -60,7 +60,7 @@ const Index = () => {
           content="بوابة التوظيف الأولى في الوطن العربي. ابحث عن أحدث الوظائف في الكويت، السعودية، الإمارات، قطر، عمان، البحرين ومصر. آلاف الفرص المتجددة يومياً للمواطنين والوافدين."
         />
         <meta name="keywords" content="وظائف الخليج، وظائف الكويت اليوم، وظائف السعودية ٢٠٢٤، وظائف دبي، وظائف قطر، عمل، توظيف، فرص عمل للمصريين، وظائف شاغرة، البحث عن عمل" />
-        <link rel="canonical" href="https://www.wazafnihalan.com" />
+        <link rel="canonical" href="https://www.wazafnihalan.com/" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />

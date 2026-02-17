@@ -5,6 +5,7 @@ import Layout from '@/components/layout/Layout';
 import AdSense from '@/components/common/AdSense';
 import { usePublishedBlogPosts } from '@/hooks/useBlogPosts';
 import PageHeader from '@/components/layout/PageHeader';
+import { getDirection } from '@/lib/utils';
 
 const Blog = () => {
   const { data: blogPosts = [], isLoading } = usePublishedBlogPosts();
@@ -62,8 +63,8 @@ const Blog = () => {
                       <span className="text-4xl">📝</span>
                     </div>
                   </div>
-                  <h2 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">{post.title}</h2>
-                  {post.excerpt && <p className="text-sm text-foreground line-clamp-2 mb-4">{post.excerpt}</p>}
+                  <h2 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2" dir={getDirection(post.title)}>{post.title}</h2>
+                  {post.excerpt && <p className="text-sm text-foreground line-clamp-2 mb-4" dir={getDirection(post.excerpt)}>{post.excerpt}</p>}
                   <div className="flex items-center justify-between text-sm text-foreground pt-4 border-t border-border mt-auto">
                     <span className="flex items-center gap-1"><User className="w-4 h-4" />{post.author}</span>
                     <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{formatDate(post.created_at)}</span>

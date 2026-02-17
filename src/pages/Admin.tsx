@@ -28,6 +28,7 @@ import { countries, exclusiveTagLabels, JobExclusiveTag, Job, BlogPost } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { getDirection } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -56,11 +57,6 @@ interface UserRole {
 
 
 const Admin = () => {
-  const getTextDirection = (text: string) => {
-    if (!text) return "rtl";
-    const arabicPattern = /[\u0600-\u06FF]/;
-    return arabicPattern.test(text) ? "rtl" : "ltr";
-  };
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
@@ -642,7 +638,7 @@ const Admin = () => {
                         {filteredJobs.map((job) => (
                           <tr key={job.id} className="border-b border-border hover:bg-muted/50">
                             <td className="py-3 px-4">
-                              <span className="font-medium text-foreground">{job.title}</span>
+                              <span className="font-medium text-foreground" dir={getDirection(job.title)}>{job.title}</span>
                               {job.is_featured && (
                                 <span className="mr-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
                                   مميز
@@ -716,7 +712,7 @@ const Admin = () => {
                       className="bg-card rounded-xl p-5 border border-border flex items-center justify-between"
                     >
                       <div>
-                        <h3 className="font-bold text-foreground mb-1">{post.title}</h3>
+                        <h3 className="font-bold text-foreground mb-1" dir={getDirection(post.title)}>{post.title}</h3>
                         <p className="text-sm text-foreground font-medium">
                           {post.author} • {formatDate(post.created_at)}
                           {!post.is_published && (

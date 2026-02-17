@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, getDirection } from '@/lib/utils';
 
 interface PageHeaderProps {
     title: string;
@@ -29,12 +29,18 @@ const PageHeader = ({ title, subtitle, children, className, backgroundImage }: P
             )}
 
             <div className="container-custom relative z-10 px-4 text-center">
-                <h1 className="text-3xl sm:text-2xl md:text-2xl lg:text-5xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow">
+                <h1
+                    className="text-3xl sm:text-2xl md:text-2xl lg:text-5xl font-extrabold text-white mb-6 leading-tight animate-slide-up text-glow"
+                    dir={getDirection(title)}
+                >
                     {title}
                 </h1>
 
                 {subtitle && (
-                    <div className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto px-2 animate-slide-up animate-delay-100 font-medium leading-relaxed">
+                    <div
+                        className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto px-2 animate-slide-up animate-delay-100 font-medium leading-relaxed"
+                        dir={typeof subtitle === 'string' ? getDirection(subtitle) : undefined}
+                    >
                         {subtitle}
                     </div>
                 )}

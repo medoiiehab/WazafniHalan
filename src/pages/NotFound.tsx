@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Home, Search } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
 import AdSense from "@/components/common/AdSense";
 
@@ -13,6 +14,11 @@ const NotFound = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>الصفحة غير موجودة | وظفني حالاً</title>
+        <link rel="canonical" href="https://www.wazafnihalan.com/404" />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
       <div className="container-custom py-20">
         <div className="max-w-lg mx-auto text-center">
           <div className="text-8xl font-bold text-primary mb-4">404</div>
