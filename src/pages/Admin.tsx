@@ -20,7 +20,6 @@ import {
   UserMinus,
   Megaphone,
   Menu,
-  Eye,
 } from "lucide-react";
 import { useJobs, useCreateJob, useUpdateJob, useDeleteJob } from "@/hooks/useJobs";
 import { useBlogPosts, useCreateBlogPost, useUpdateBlogPost, useDeleteBlogPost } from "@/hooks/useBlogPosts";
@@ -150,32 +149,32 @@ const Admin = () => {
     }
   }, [adSenseSettings]);
 
-  // Fetch editor information for jobs
+  // Fetch editor information for jobs using batched RPC
   useEffect(() => {
     const fetchEditorInfo = async () => {
-      const editorIds = jobs
+      const editorIds = Array.from(new Set(jobs
         .map(job => job.editor)
-        .filter((id): id is string => id !== null && id !== undefined && id !== '');
+        .filter((id): id is string => id !== null && id !== undefined && id !== '')));
 
       if (editorIds.length === 0) return;
 
-      const newEditorInfo: Record<string, string> = { ...editorInfo };
-      const missingIds = editorIds.filter(id => !newEditorInfo[id]);
-
+      const missingIds = editorIds.filter(id => !editorInfo[id]);
       if (missingIds.length === 0) return;
 
-      for (const editorId of missingIds) {
-        try {
-          const { data, error } = await supabase.rpc('get_user_email', { user_uuid: editorId });
-          if (!error && data) {
-            newEditorInfo[editorId] = data;
-          }
-        } catch (error) {
-          console.error(`Failed to fetch editor info for ${editorId}:`, error);
-        }
-      }
+      try {
+        const { data, error } = await (supabase as any).rpc('get_user_emails_batched', { user_ids: missingIds });
+        if (error) throw error;
 
-      setEditorInfo(newEditorInfo);
+        if (data && Array.isArray(data)) {
+          const newInfo = { ...editorInfo };
+          (data as { id: string; email: string }[]).forEach((item) => {
+            newInfo[item.id] = item.email;
+          });
+          setEditorInfo(newInfo);
+        }
+      } catch (error) {
+        console.error("Failed to fetch batched editor info:", error);
+      }
     };
 
     fetchEditorInfo();
@@ -634,7 +633,6 @@ const Admin = () => {
                           <th className="text-right py-3 px-4 font-medium text-foreground">العنوان</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">الشركة</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">الدولة</th>
-                          <th className="text-right py-3 px-4 font-medium text-foreground">إحصائيات المشاهدة</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">المحرر</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">التاريخ</th>
                           <th className="text-right py-3 px-4 font-medium text-foreground">الإجراءات</th>
@@ -658,14 +656,6 @@ const Admin = () => {
                             </td>
                             <td className="py-3 px-4 text-foreground font-medium">{job.company}</td>
                             <td className="py-3 px-4 text-foreground font-medium">{job.country}</td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 w-fit">
-                                <Eye className="w-4 h-4" />
-                                <span className="text-sm font-bold">
-                                  {(jobsAnalytics.find(a => a.job_id === job.id)?.views || 0).toLocaleString("ar-SA")}
-                                </span>
-                              </div>
-                            </td>
                             <td className="py-3 px-4 text-foreground text-sm font-medium">
                               {job.editor ? (
                                 <div className="flex flex-col gap-1">
